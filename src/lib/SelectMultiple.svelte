@@ -107,10 +107,10 @@
     <div class="select">
         <div class="input-element input-group">
             {#each selectedItems.map((value) => options.find((elem) => elem.value === value)) as item}
-                <button type="button" class="btn btn-sm d-flex align-items-center bg-primary-subtle">
+                <button type="button" class="btn btn-sm d-flex align-items-center bg-primary-subtle"
+                        on:click={() => removeItem(item)}>
                     <span class="flex-shrink-0">{item.label}</span>
-                    <i class="bi bi-x ms-1" role="button" tabindex="0"
-                       on:click={() => removeItem(item)}></i>
+                    <i class="bi bi-x ms-1" role="button"></i>
                 </button>
             {/each}
 
