@@ -1,3 +1,4 @@
+<svelte:options customElement={{tag: "select-multiple", shadow: 'none'}} />
 <script>
     import {createEventDispatcher} from "svelte";
 
@@ -45,6 +46,7 @@
         const index = selectedItems.indexOf(item.value)
         if (index !== -1) {
             selectedItems = selectedItems.toSpliced(index, 1)
+            currentIndex = 0
             dispatch('change', {value: selectedItems})
         }
         inputElement.focus()
@@ -53,6 +55,7 @@
     function removeLastItem() {
         selectedItems.pop()
         selectedItems = selectedItems
+        currentIndex = 0
         dispatch('change', {value: selectedItems})
     }
 
@@ -106,7 +109,7 @@
             {#each selectedItems.map((value) => options.find((elem) => elem.value === value)) as item}
                 <button type="button" class="btn btn-sm d-flex align-items-center bg-primary-subtle">
                     <span class="flex-shrink-0">{item.label}</span>
-                    <i class="bi bi-x-lg ms-2" role="button" tabindex="0"
+                    <i class="bi bi-x ms-1" role="button" tabindex="0"
                        on:click={() => removeItem(item)}></i>
                 </button>
             {/each}
@@ -119,7 +122,7 @@
 
         <div class="dropdown border border-top-0 p-2 position-absolute" style="width: 45em" tabindex="-1">
             <ul class="list-unstyled mb-0" tabindex="-1"
-                style="height: 10.75em; overflow-y: scroll">
+                style="height: {Math.min(Math.max(filteredResults.length, 0), 5) * 2}rem; overflow-y: scroll">
                 {#each filteredResults as item, index}
                     <li data-index={index}
                         class="d-flex align-items-center justify-content-between user-select-none"
@@ -185,5 +188,9 @@
 
     .dropdown li.active {
         background-color: rgba(var(--bs-secondary-rgb), 0.10)
+    }
+
+    .dropdown li.active:hover {
+        background-color: rgba(var(--bs-secondary-rgb), 0.12)
     }
 </style>
