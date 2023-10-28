@@ -1,23 +1,43 @@
-<svelte:options customElement={{tag: "select-multiple", shadow: 'none'}} />
+<svelte:options customElement={{tag: "select-component", shadow: 'none'}} />
 <script>
     import {createEventDispatcher} from "svelte";
 
     const dispatch = createEventDispatcher()
 
+
+    export let id
+    export let name
     export let options = []
     export let selectedItems = []
+    export let multiple = false
+    export let errors = false
+
+
+    let inputElement = null
 
     let inputValue = ''
     let currentIndex = null
 
-    let inputElement = null
+    let initialOptions = []
+    let filteredResults = []
 
-    $: initialOptions = options.filter((elem) => !selectedItems.includes(elem.value))
-    $: filteredResults = inputValue.length === 0 ? initialOptions : initialOptions.filter(match(inputValue))
     $: inputValue, currentIndex = 0
+    $: initialOptions = options.filter((elem) => !selectedItems.includes(elem.value)),
+        filteredResults = filterResults(inputValue, selectedItems, multiple)
 
-    function match(inputValue) {
-        return (element) => element.label.toLowerCase().includes(inputValue.toLowerCase())
+    function filterResults(inputValue, selectedItems, multiple) {
+        if (!multiple && selectedItems.length > 0) {
+            // single selection and we already have one, no more choices
+            return []
+        }
+
+        if (inputValue.length === 0) {
+            return initialOptions
+        } else {
+            return initialOptions.filter(
+                (element) => element.label.toLowerCase().includes(inputValue.toLowerCase())
+            )
+        }
     }
 
     function addItem(item) {
@@ -101,45 +121,55 @@
     }
 </script>
 
-<div class="text-start" style="width: 45em">
-    <input type="hidden" name="items" value={selectedItems} />
+<div class="select">
+    {#each selectedItems as item}
+        <input type="hidden" name={name} value={item} />
+    {/each}
 
-    <div class="select">
-        <div class="input-element input-group">
-            {#each selectedItems.map((value) => options.find((elem) => elem.value === value)) as item}
-                <button type="button" class="btn btn-sm d-flex align-items-center bg-primary-subtle"
-                        on:click={() => removeItem(item)}>
-                    <span class="flex-shrink-0">{item.label}</span>
-                    <i class="bi bi-x ms-1" role="button"></i>
-                </button>
-            {/each}
+    <div class="input-element input-group p-1 gap-1">
+        {#each selectedItems.map((value) => options.find((elem) => elem.value === value)) as item}
+            <button type="button" class="btn btn-sm d-flex align-items-center bg-primary-subtle"
+                    on:click={() => removeItem(item)} tabindex="-1">
+                <span class="flex-shrink-0">{item.label}</span>
+                <i class="bi bi-x ms-1" role="button"></i>
+            </button>
+        {/each}
 
-            <input type="text" class="form-control"
-                   bind:this={inputElement} bind:value={inputValue}
-                   on:beforeinput={handleBeforeInput} on:keydown={handleKey}
-                   on:blur={() => inputValue = ''}>
-        </div>
-
-        <div class="dropdown border border-top-0 p-2 position-absolute" style="width: 45em" tabindex="-1">
-            <ul class="list-unstyled mb-0" tabindex="-1"
-                style="height: {Math.min(Math.max(filteredResults.length, 0), 5) * 2}rem; overflow-y: scroll">
-                {#each filteredResults as item, index}
-                    <li data-index={index}
-                        class="d-flex align-items-center justify-content-between user-select-none"
-                        class:active={currentIndex === index}
-                        on:click={() => addItem(item)}>
-                        <span>{item.label}</span>
-                    </li>
-                {/each}
-            </ul>
-        </div>
+        <input type="text" id={id} class="form-control" class:is-invalid={errors}
+               bind:this={inputElement} bind:value={inputValue}
+               on:beforeinput={handleBeforeInput} on:keydown={handleKey}
+               on:blur={() => inputValue = ''}>
     </div>
+
+    {#if ((multiple && filteredResults.length > 0) || selectedItems.length === 0)}
+    <div class="dropdown p-2 shadow-sm" tabindex="-1">
+        <ul class="list-unstyled mb-0" tabindex="-1"
+            style="height: {Math.min(Math.max(filteredResults.length, 0), 3) * 2}rem; overflow-y: scroll">
+            {#each filteredResults as item, index}
+                <li data-index={index}
+                    class="d-flex align-items-center justify-content-between user-select-none"
+                    class:active={currentIndex === index}
+                    on:click={() => addItem(item)}>
+                    <span>{item.label}</span>
+                </li>
+            {/each}
+        </ul>
+    </div>
+    {/if}
 </div>
 
 <style>
+    :root {
+        --component-width: 30rem;
+    }
+
     .select {
         border: var(--bs-border-width) solid var(--bs-border-color);
         border-radius: var(--bs-border-radius);
+
+        position: relative;
+
+        text-align: start;
     }
 
     .select:focus-within {
@@ -150,22 +180,6 @@
         box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
     }
 
-    .input-element input {
-        border: none;
-        outline: none;
-        box-shadow: 0 0 0 0;
-
-        min-width: 10rem;
-        background-color: transparent;
-
-        padding-left: 0.5rem;
-    }
-
-    .input-element button {
-        margin: 0.15rem 0 0.15rem 0.3rem !important;
-        border-radius: var(--bs-border-radius) !important;
-    }
-
     .select .dropdown {
         display: none;
     }
@@ -174,7 +188,26 @@
         display: block;
     }
 
-    .dropdown ul {
+    .input-element input {
+        border: none;
+        outline: none;
+        box-shadow: 0 0 0 0;
+
+        min-width: 10rem;
+        background-color: transparent;
+
+        padding-left: 0.25rem;
+    }
+
+    .input-element button {
+        border-radius: var(--bs-border-radius) !important;
+    }
+
+    .dropdown {
+        position: absolute;
+        width: 100%;
+
+        margin-top: 0.5rem;
         background-color: white;
     }
 

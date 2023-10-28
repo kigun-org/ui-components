@@ -25,7 +25,7 @@ export default defineConfig({
         },
         lib: {
             entry: [
-                resolve(__dirname, 'src/lib/SelectMultiple.svelte'),
+                resolve(__dirname, 'src/lib/Select.svelte'),
             ],
             formats: ['es'],
             fileName: (_, entryAlias) => `${entryAlias}.js`,
