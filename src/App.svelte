@@ -4,6 +4,7 @@
 
   import Select from "./lib/Select.svelte";
   import UploadFolder from "./lib/UploadFolder.svelte";
+  import ImageEditor from "./lib/ImageEditor.svelte";
 
   const states = [
     {label: "California", value: 1},
@@ -22,11 +23,20 @@
   function filesSelected(ev) {
     console.log("changed: ", ev.detail.fileList)
   }
+
+  function uploadImage(ev) {
+    console.log(ev.detail.image)
+  }
 </script>
 
 <main>
-
   <form method="post" action="/test" class="container">
+    <div class="row mb-5">
+      <div class="col-auto">
+        <ImageEditor on:imageReady={uploadImage} />
+      </div>
+    </div>
+
     <div class="row mb-5">
       <div class="col-3">
         <label for="single">Single</label>
