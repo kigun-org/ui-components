@@ -159,10 +159,6 @@
 </div>
 
 <style>
-    :root {
-        --component-width: 30rem;
-    }
-
     .select {
         border: var(--bs-border-width) solid var(--bs-border-color);
         border-radius: var(--bs-border-radius);
