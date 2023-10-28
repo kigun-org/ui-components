@@ -22,10 +22,10 @@
     let filteredResults = []
 
     $: inputValue, currentIndex = 0
-    $: initialOptions = options.filter((elem) => !selectedItems.includes(elem.value)),
-        filteredResults = filterResults(inputValue, selectedItems, multiple)
+    $: initialOptions = options.filter((elem) => !selectedItems.includes(elem.value))
+    $: filteredResults = filterResults(initialOptions, inputValue, selectedItems, multiple)
 
-    function filterResults(inputValue, selectedItems, multiple) {
+    function filterResults(initialOptions, inputValue, selectedItems, multiple) {
         if (!multiple && selectedItems.length > 0) {
             // single selection and we already have one, no more choices
             return []
