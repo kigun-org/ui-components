@@ -4,7 +4,8 @@ import {svelte} from '@sveltejs/vite-plugin-svelte'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    base: '/static/eos/',
+    base: '/static/ui-components/',
+    publicDir: false,
     plugins: [svelte({
             compilerOptions: {
                 customElement: true
@@ -12,11 +13,6 @@ export default defineConfig({
         }
     )],
     build: {
-        // keep function names
-        // minify: "terser",
-        // terserOptions: {
-        //     keep_fnames: true,
-        // },
         rollupOptions: {
             external: [
                 'bootstrap/dist/css/bootstrap.css',
@@ -26,6 +22,7 @@ export default defineConfig({
         lib: {
             entry: [
                 resolve(__dirname, 'src/lib/Select.svelte'),
+                resolve(__dirname, 'src/lib/UploadFolder.svelte'),
             ],
             formats: ['es'],
             fileName: (_, entryAlias) => `${entryAlias}.js`,

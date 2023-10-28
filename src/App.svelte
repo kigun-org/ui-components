@@ -3,6 +3,7 @@
   import 'bootstrap/dist/css/bootstrap.css'
 
   import Select from "./lib/Select.svelte";
+  import UploadFolder from "./lib/UploadFolder.svelte";
 
   const states = [
     {label: "California", value: 1},
@@ -17,12 +18,16 @@
   function valueChanged(ev) {
     // console.log("value changed", ev)
   }
+
+  function filesSelected(ev) {
+    console.log("changed: ", ev.detail.fileList)
+  }
 </script>
 
 <main>
 
   <form method="post" action="/test" class="container">
-    <div class="row">
+    <div class="row mb-5">
       <div class="col-3">
         <label for="single">Single</label>
         <Select id="single" name="abc" options={states} selectedItems={[4]} on:change={valueChanged} />
@@ -35,6 +40,15 @@
         <label for="multiple">Multiple error</label>
         <Select id="multiple" name="ghi" errors={true}
                 options={states} selectedItems={[4,3]} multiple={true} on:change={valueChanged} />
+      </div>
+    </div>
+
+    <div class="row mb-5">
+      <div class="col-auto">
+        <UploadFolder id="upload1" on:change={filesSelected} />
+      </div>
+      <div class="col-7">
+        <UploadFolder id="upload2" message="Another message, should still work fine" on:change={filesSelected} />
       </div>
     </div>
 
