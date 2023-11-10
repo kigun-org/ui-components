@@ -137,8 +137,7 @@
 
         <input type="text" id={id} class="form-control" class:is-invalid={errors}
                bind:this={inputElement} bind:value={inputValue}
-               on:beforeinput={handleBeforeInput} on:keydown={handleKey}
-               on:blur={() => inputValue = ''}>
+               on:beforeinput={handleBeforeInput} on:keydown={handleKey}>
     </div>
 
     {#if ((multiple && filteredResults.length > 0) || selectedItems.length === 0)}
@@ -182,6 +181,7 @@
 
     .select:focus-within .dropdown {
         display: block;
+        z-index: 10;
     }
 
     .input-element input {
