@@ -7,6 +7,7 @@
     export let id = "ID"
 
     let originalImageBlob = null
+    let saving = false
 
     let crop = null
     let flipH = false
@@ -114,6 +115,9 @@
         })
 
         document.querySelector(`#${id} .save-button`).addEventListener('click', () => {
+            originalImageBlob = null
+            saving = true
+
             const canvasElement = document.getElementById(`${id}_canvas`)
             const image = canvasElement.toDataURL("image/webp", 0.99)
             dispatch('imageReady', {image: image})
@@ -155,8 +159,16 @@
     <div class="mt-2 d-flex justify-content-between gap-5">
         <div>
             <button type="button" disabled={originalImageBlob === null}
-                    class="save-button btn btn-primary">Save image</button>
+                    class="save-button btn btn-primary">
+                {#if saving}
+                    <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+                    Saving
+                {:else}
+                    Save image
+                {/if}
+            </button>
         </div>
+
         <div>
             <button type="button" disabled={originalImageBlob === null}
                     class="reset-button btn btn-outline-secondary">
