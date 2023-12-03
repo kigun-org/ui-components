@@ -88,44 +88,6 @@
         }
     }
 
-    onMount(() => {
-        const containerElement = document.getElementById(`${id}_container`)
-
-        containerElement.addEventListener("dragover", (event) => {
-            event.preventDefault()
-        })
-
-        containerElement.addEventListener('drop', (ev) => {
-            ev.preventDefault()
-
-            if (ev.dataTransfer.items) {
-                // Use DataTransferItemList interface to access the file(s)
-                [...ev.dataTransfer.items].forEach((item, i) => {
-                    // If dropped items aren't files, reject them
-                    if (item.kind === "file") {
-                        const file = item.getAsFile();
-                        setImage(file)
-                    }
-                })
-            } else {
-                // Use DataTransfer interface to access the file(s)
-                [...ev.dataTransfer.files].forEach((file, i) => {
-                    setImage(file)
-                })
-            }
-        })
-
-        document.addEventListener('paste', async (e) => {
-            e.preventDefault()
-
-            for (const clipboardItem of e.clipboardData.files) {
-                if (clipboardItem.type.startsWith('image/')) {
-                    setImage(clipboardItem)
-                }
-            }
-        })
-    })
-
     function setImage(imageBlob) {
         originalImageBlob = imageBlob
         resetImage()
@@ -234,6 +196,44 @@
             endPoint = getPointerPosition(ev)
         }
     }
+
+    onMount(() => {
+        const containerElement = document.getElementById(`${id}_container`)
+
+        containerElement.addEventListener("dragover", (event) => {
+            event.preventDefault()
+        })
+
+        containerElement.addEventListener('drop', (ev) => {
+            ev.preventDefault()
+
+            if (ev.dataTransfer.items) {
+                // Use DataTransferItemList interface to access the file(s)
+                [...ev.dataTransfer.items].forEach((item, i) => {
+                    // If dropped items aren't files, reject them
+                    if (item.kind === "file") {
+                        const file = item.getAsFile();
+                        setImage(file)
+                    }
+                })
+            } else {
+                // Use DataTransfer interface to access the file(s)
+                [...ev.dataTransfer.files].forEach((file, i) => {
+                    setImage(file)
+                })
+            }
+        })
+
+        document.addEventListener('paste', async (e) => {
+            e.preventDefault()
+
+            for (const clipboardItem of e.clipboardData.files) {
+                if (clipboardItem.type.startsWith('image/')) {
+                    setImage(clipboardItem)
+                }
+            }
+        })
+    })
 </script>
 
 <div {id}>
