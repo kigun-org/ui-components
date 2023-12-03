@@ -258,7 +258,7 @@
             </button>
         </div>
 
-        <div>
+        <div class="d-flex flex-wrap gap-2">
             <button type="button" disabled={originalImageBlob === null}
                     class="reset-button btn btn-outline-secondary"
                     on:click={resetImage}>
