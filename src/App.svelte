@@ -32,7 +32,7 @@
 <main>
   <form method="post" action="/test" class="container">
     <div class="row mb-5">
-      <div class="col-auto">
+      <div class="col-auto" style="width: 50vw">
         <ImageEditor on:imageReady={uploadImage} />
       </div>
     </div>

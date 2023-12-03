@@ -303,8 +303,6 @@
 <style>
     .editor-container {
         display: flex;
-        max-width: 70vw;
-        max-height: 70vh;
         aspect-ratio: 3 / 2;
         background-color: #eee;
         border: 3px dashed #ddd
