@@ -17,13 +17,21 @@ export default defineConfig({
             external: [
                 'bootstrap/dist/css/bootstrap.css',
                 'bootstrap-icons/font/bootstrap-icons.css'
-            ]
+            ],
+            output: {
+                manualChunks: (id) => {
+                    if (id.includes('node_modules')) {
+                        return 'common'
+                    }
+                }
+            }
         },
         lib: {
             entry: [
                 resolve(__dirname, 'src/lib/Select.svelte'),
                 resolve(__dirname, 'src/lib/UploadFolder.svelte'),
-                resolve(__dirname, 'src/lib/ImageEditor.svelte'),
+                resolve(__dirname, 'src/lib/SelectImage.svelte'),
+                resolve(__dirname, 'src/lib/ImageUpload.svelte'),
             ],
             formats: ['es'],
             fileName: (_, entryAlias) => `${entryAlias}.js`,

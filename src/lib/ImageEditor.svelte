@@ -1,35 +1,54 @@
 <svelte:options customElement={{tag: "image-editor", shadow: 'none'}}/>
 <script>
     import {createEventDispatcher, onMount} from "svelte";
-    import {flip} from "svelte/animate";
 
     const dispatch = createEventDispatcher()
 
-    export let id = "ID"
-
+    export let originalImageBlob
     let canvasElement
-
-    // Create an image to render the blob on the canvas
     let canvasImage = new Image()
 
-    let originalImageBlob = null
-    let saving = false
+    export let validators
+    let warnings = []
+
+    export let upload = null
+    let uploadComplete = false
+    let uploadMessage = null
+    let uploadError = false
+
+    let uploading = false
 
     let flipH = false
     let flipV = false
     let rotate = 0
-
-    let crop = null
 
     let drawing = false
     let isDrawing = false
     let startPoint = null
     let endPoint = null
 
-    $: drawCanvas(originalImageBlob, flipH, flipV, rotate, crop, startPoint, endPoint)
+    $: drawCanvas(originalImageBlob, flipH, flipV, rotate, startPoint, endPoint)
 
-    function drawCanvas(originalImageBlob, flipH, flipV, rotate, crop, startPoint, endPoint) {
-        if (originalImageBlob !== null) {
+    $: buttonsDisabled = originalImageBlob === undefined || uploading || uploadComplete || uploadError
+
+    function validate(imageBlob, validators) {
+        const testImage = new Image()
+
+        testImage.onload = () => {
+            warnings = []
+            for (const validator of validators) {
+                if (validator.test(testImage)) {
+                    warnings = [...warnings, validator.message]
+                }
+            }
+        }
+
+        const URLObj = window.URL || window.webkitURL
+        testImage.src = URLObj.createObjectURL(imageBlob)
+    }
+
+    function drawCanvas(originalImageBlob, flipH, flipV, rotate, startPoint, endPoint) {
+        if (canvasElement !== undefined && originalImageBlob !== undefined) {
             const canvasContext = canvasElement.getContext('2d')
 
             // Once the image loads, render the canvasImage on the canvas
@@ -79,26 +98,68 @@
                 }
             }
 
-            // Cross-browser support for URL
             const URLObj = window.URL || window.webkitURL
-
-            // Creates a DOMString containing a URL representing the object given in the parameter
-            // namely the original Blob
             canvasImage.src = URLObj.createObjectURL(originalImageBlob)
         }
     }
 
-    function setImage(imageBlob) {
-        originalImageBlob = imageBlob
-        resetImage()
-    }
+    function uploadImage() {
+        uploading = true
 
-    function saveImage() {
-        originalImageBlob = null
-        saving = true
+        canvasElement.toBlob((blob) => {
+            const formData = new FormData()
 
-        const image = canvasElement.toDataURL("image/webp", 0.99)
-        dispatch('imageReady', {image: image})
+            if (upload.params !== undefined) {
+                for (const param in upload.params) {
+                    formData.append(param, upload.params[param])
+                }
+            }
+
+            const today = new Date().toISOString().slice(0, 10).replaceAll('-', '')
+            formData.append('uploaded_file', blob, `${today}.webp`)
+
+            const req = new XMLHttpRequest()
+            req.open("POST", upload.url)
+
+            // req.upload.onprogress = (event) => {
+            //     console.log(event)
+            //     // update progress
+            // }
+
+            req.onreadystatechange = () => {
+                if (req.readyState === XMLHttpRequest.DONE) {
+                    uploading = false
+
+                    if (req.status === 200) {
+                        uploadComplete = true
+                        dispatch('uploadComplete', null)
+                    } else {
+                        uploadError = true
+                        uploadMessage = `Error: ${req.status} ${req.statusText}`
+                        dispatch('uploadError', null)
+                    }
+                }
+            }
+
+            // req.onabort = (event) => {
+            //     console.log("Upload aborted.", event)
+            //     uploading = false
+            //     uploadMessage = "Upload aborted."
+            // }
+
+            req.onerror = (event) => {
+                uploading = false
+                uploadError = true
+                if (event.target.statusText === '') {
+                    uploadMessage = `Error uploading file.`
+                } else {
+                    uploadMessage = `Error: ${req.status} ${event.target.statusText}`
+                }
+                dispatch('uploadError', null)
+            }
+
+            req.send(formData)
+        }, "image/webp", 0.99)
     }
 
     function resetImage() {
@@ -106,9 +167,8 @@
         flipV = false
         rotate = 0
 
-        crop = null
-
         drawing = false
+        isDrawing = false
         startPoint = null
         endPoint = null
     }
@@ -119,6 +179,7 @@
         endPoint = null
         drawing = false
     }
+
     function handleFlipV() {
         flipV = !flipV
         startPoint = null
@@ -197,48 +258,35 @@
         }
     }
 
+    function hideWarning(ev) {
+        ev.target.parentElement.classList.add("d-none")
+    }
+
     onMount(() => {
-        const containerElement = document.getElementById(`${id}_container`)
-
-        containerElement.addEventListener("dragover", (event) => {
-            event.preventDefault()
-        })
-
-        containerElement.addEventListener('drop', (ev) => {
-            ev.preventDefault()
-
-            if (ev.dataTransfer.items) {
-                // Use DataTransferItemList interface to access the file(s)
-                [...ev.dataTransfer.items].forEach((item, i) => {
-                    // If dropped items aren't files, reject them
-                    if (item.kind === "file") {
-                        const file = item.getAsFile();
-                        setImage(file)
-                    }
-                })
-            } else {
-                // Use DataTransfer interface to access the file(s)
-                [...ev.dataTransfer.files].forEach((file, i) => {
-                    setImage(file)
-                })
-            }
-        })
-
-        document.addEventListener('paste', async (e) => {
-            e.preventDefault()
-
-            for (const clipboardItem of e.clipboardData.files) {
-                if (clipboardItem.type.startsWith('image/')) {
-                    setImage(clipboardItem)
-                }
-            }
-        })
+        validate(originalImageBlob, validators)
+        drawCanvas(originalImageBlob, flipH, flipV, rotate, startPoint, endPoint)
     })
 </script>
 
-<div {id}>
-    <div id={`${id}_container`} class="editor-container">
-        <canvas bind:this={canvasElement} id={`${id}_canvas`} style="touch-action: none"
+<div>
+    <div class="editor-container">
+        {#if validators}
+            <div class="warnings">
+                {#each warnings as warning}
+                    <div class="alert alert-warning d-flex justify-content-between align-items-center">
+                        <span>{warning}</span>
+                        <button class="btn btn-close" on:click={hideWarning}></button>
+                    </div>
+                {/each}
+                {#if uploadMessage}
+                    <div class="alert alert-danger text-start">
+                        {uploadMessage}
+                    </div>
+                {/if}
+            </div>
+        {/if}
+
+        <canvas bind:this={canvasElement} style="touch-action: none"
                 on:pointerdown={handleStart} on:pointerup={handleEnd}
                 on:pointercancel={handleCancel} on:pointermove={handleMove}>
         </canvas>
@@ -246,10 +294,20 @@
 
     <div class="mt-2 d-flex justify-content-between gap-5">
         <div>
-            <button type="button" disabled={originalImageBlob === null}
-                    class="save-button btn btn-primary"
-                    on:click={saveImage}>
-                {#if saving}
+            <button type="button"
+                    disabled={buttonsDisabled}
+                    class="save-button btn"
+                    class:btn-primary={!uploadError}
+                    class:btn-danger={uploadError}
+                    class:btn-success={uploadComplete}
+                    on:click={uploadImage}>
+                {#if uploadError}
+                    <span class="bi bi-exclamation-triangle me-2"></span>
+                    Error
+                {:else if uploadComplete}
+                    <span class="bi bi-check-lg me-2"></span>
+                    Saved
+                {:else if uploading}
                     <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
                     Saving
                 {:else}
@@ -259,29 +317,29 @@
         </div>
 
         <div class="d-flex flex-wrap gap-2">
-            <button type="button" disabled={originalImageBlob === null}
+            <button type="button" disabled={originalImageBlob === undefined}
                     class="reset-button btn btn-outline-secondary"
                     on:click={resetImage}>
                 Reset
             </button>
-            <button type="button" disabled={originalImageBlob === null || drawing}
+            <button type="button" disabled={buttonsDisabled || drawing}
                     class="flip-h-button btn" class:btn-outline-secondary={!flipH} class:btn-secondary={flipH}
                     on:click={handleFlipH}>
                 <i class="bi bi-symmetry-vertical"></i>
             </button>
-            <button type="button" disabled={originalImageBlob === null || drawing}
+            <button type="button" disabled={buttonsDisabled || drawing}
                     class="flip-v-button btn" class:btn-outline-secondary={!flipV} class:btn-secondary={flipV}
                     on:click={handleFlipV}>
                 <i class="bi bi-symmetry-horizontal"></i>
             </button>
-            <button type="button" disabled={originalImageBlob === null || drawing}
+            <button type="button" disabled={buttonsDisabled || drawing}
                     class="rotate-cw-button btn"
                     class:btn-outline-secondary={rotate === 0 || rotate === 270}
                     class:btn-secondary={rotate === 90 || rotate === 180}
                     on:click={handleRotateCW}>
                 <i class="bi bi-arrow-clockwise"></i>
             </button>
-            <button type="button" disabled={originalImageBlob === null || drawing}
+            <button type="button" disabled={buttonsDisabled || drawing}
                     class="rotate-ccw-button btn"
                     class:btn-outline-secondary={rotate === 0 || rotate === 90}
                     class:btn-secondary={rotate === 270 || rotate === 180}
@@ -289,7 +347,7 @@
                 <i class="bi bi-arrow-counterclockwise"></i>
             </button>
 
-            <button type="button" disabled={originalImageBlob === null || rotate === 90 || rotate === 270}
+            <button type="button" disabled={buttonsDisabled || rotate === 90 || rotate === 270}
                     class="btn"
                     class:btn-outline-secondary={!drawing}
                     class:btn-secondary={drawing}
@@ -302,10 +360,20 @@
 
 <style>
     .editor-container {
+        position: relative;
+        width: 100%;
+
         display: flex;
         aspect-ratio: 3 / 2;
-        background-color: #eee;
-        border: 3px dashed #ddd
+        background-color: rgba(var(--bs-secondary-rgb), 0.1);
+        border: 5px dotted rgba(var(--bs-secondary-rgb), 0.15);
+    }
+
+    .editor-container .warnings {
+        position: absolute;
+        top: 1.5rem;
+        left: 1.5rem;
+        right: 1.5rem;
     }
 
     .editor-container canvas {
