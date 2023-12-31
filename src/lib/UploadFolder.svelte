@@ -4,15 +4,12 @@
 
     const dispatch = createEventDispatcher()
 
-    export let id
-
     export let message = "Click to select a folder or drop a folder here"
 
-    onMount(() => {
-        // const formElement = document.getElementById(id)
-        const inputElement = document.querySelector(`#${id} input`)
-        const labelElement = document.querySelector(`#${id} label`)
+    let inputElement
+    let labelElement
 
+    onMount(() => {
         inputElement.addEventListener('change', (event) => {
             const fileList = event.target.files || event.dataTransfer.files
             dispatch('change', {fileList: fileList})
@@ -61,10 +58,9 @@
     })
 </script>
 
-<form {id} enctype="multipart/form-data" class="upload">
-    <!--{% csrf_token %}-->
-    <input id={`${id}_input`} type="file" webkitdirectory directory />
-    <label for={`${id}_input`}>
+<form enctype="multipart/form-data" class="upload">
+    <label bind:this={labelElement}>
+        <input bind:this={inputElement} type="file" webkitdirectory directory />
         <i class="bi bi-upload fs-4"></i>
         <span>{message}</span>
     </label>
