@@ -1,5 +1,5 @@
 <script>
-    import {Canvas, Rect, FabricImage, Triangle, Line, Group, filters, Point, util, Circle} from 'fabric';
+    import {Canvas, Rect, FabricImage, Triangle, Line, Group, filters, Point, util, Circle, Path} from 'fabric';
     import {onMount} from "svelte";
 
     let canvas
@@ -11,6 +11,7 @@
     let flipV = false
 
     let imageElement
+    let darkRect
     let cropRect
 
     let brightness = 0
@@ -19,11 +20,22 @@
     let markers = []
     let activeMarker
 
+    function updateClipPath(boundingRect) {
+        const path = `M ${boundingRect.left - 2} ${boundingRect.top - 2} h ${boundingRect.width + 4} v ${boundingRect.height + 4} h -${boundingRect.width + 4} Z`
+        darkRect.clipPath = new Path(path, {
+            absolutePositioned: true,
+            inverted: true
+        })
+
+        canvas.renderAll()
+    }
+
     $: flipHorizontal(flipH)
 
     function flipHorizontal(flipValue) {
         if (canvasImage !== undefined) {
             canvasImage.flipX = flipValue
+            updateClipPath(cropRect.getBoundingRect())
             canvas.renderAll()
         }
     }
@@ -33,6 +45,7 @@
     function flipVertical(flipValue) {
         if (canvasImage !== undefined) {
             canvasImage.flipY = flipValue
+            updateClipPath(cropRect.getBoundingRect())
             canvas.renderAll()
         }
     }
@@ -58,8 +71,10 @@
     }
 
     onMount(() => {
-        canvas = new Canvas(canvasElement)
-        canvas.backgroundColor = "#333"
+        canvas = new Canvas(canvasElement, {
+            backgroundColor: "#333",
+            preserveObjectStacking: true
+        })
 
         FabricImage.fromURL('src/assets/4k-90.webp').then((img) => {
             canvasImage = img
@@ -79,11 +94,12 @@
 
             // crop rectangle
             cropRect = new Rect({
-                top: canvasImage.top,
                 left: canvasImage.left,
+                top: canvasImage.top,
                 width: canvasImage.width,
                 height: canvasImage.height,
                 fill: 'transparent',
+                inverted: true
             })
             cropRect.selectable = false
             cropRect.minScaleLimit = 0.2
@@ -102,6 +118,18 @@
             cropRect.lastGoodLeft = canvasImage.left
             cropRect.lastGoodScale = 1
 
+            // dark overlay
+            darkRect = new Rect({
+                top: canvasImage.top,
+                left: canvasImage.left,
+                width: canvasImage.width,
+                height: canvasImage.height,
+                fill: "rgba(0,0,0,0.6)",
+                selectable: false
+            })
+            canvas.add(darkRect)
+
+            updateClipPath(cropRect.getBoundingRect())
             canvas.add(cropRect)
 
             canvas.on("object:moving", (e) => {
@@ -111,32 +139,40 @@
 
                     // top-left corner
                     if (obj.getBoundingRect().top < canvasImage.getBoundingRect().top) {
-                        obj.top = canvasImage.getBoundingRect().top
+                        obj.top = obj.lastGoodTop
                     }
 
                     if (obj.getBoundingRect().left < canvasImage.getBoundingRect().left) {
-                        obj.left = canvasImage.getBoundingRect().left
+                        obj.left = obj.lastGoodLeft
                     }
 
                     // bot-right corner
                     if (obj.getBoundingRect().top + obj.getBoundingRect().height > canvasImage.getBoundingRect().top + canvasImage.getBoundingRect().height) {
-                        obj.top = canvasImage.getBoundingRect().top + canvasImage.getBoundingRect().height - obj.getBoundingRect().height
+                        obj.top = obj.lastGoodTop
                     }
 
                     if (obj.getBoundingRect().left + obj.getBoundingRect().width > canvasImage.getBoundingRect().left + canvasImage.getBoundingRect().width) {
-                        obj.left = canvasImage.getBoundingRect().left + canvasImage.getBoundingRect().width - obj.getBoundingRect().width
+                        obj.left = obj.lastGoodLeft
                     }
+
+                    obj.lastGoodTop = obj.top
+                    obj.lastGoodLeft = obj.left
+
+                    obj.setCoords()
+                    updateClipPath(obj.getBoundingRect())
                 }
             })
 
             canvas.on('object:scaling', (e) => {
                 const obj = e.target
                 if (obj === cropRect) {
-                    const obj_bb = obj.getBoundingRect()
+                    obj.setCoords()
+
+                    const cropRect_bb = obj.getBoundingRect()
                     const image_bb = canvasImage.getBoundingRect()
 
-                    if (obj_bb.top < image_bb.top
-                        || obj_bb.top + obj_bb.height > image_bb.top + image_bb.height) {
+                    if (cropRect_bb.top < image_bb.top
+                        || cropRect_bb.top + cropRect_bb.height > image_bb.top + image_bb.height) {
                         if (obj.scaleY > obj.lastGoodScale) {
                             obj.left = obj.lastGoodLeft
                             obj.top = obj.lastGoodTop
@@ -145,8 +181,8 @@
                         }
                     }
 
-                    if (obj_bb.left < image_bb.left
-                        || obj_bb.left + obj_bb.width > image_bb.left + image_bb.width) {
+                    if (cropRect_bb.left < image_bb.left
+                        || cropRect_bb.left + cropRect_bb.width > image_bb.left + image_bb.width) {
                         if (obj.scaleY > obj.lastGoodScale) {
                             obj.left = obj.lastGoodLeft
                             obj.top = obj.lastGoodTop
@@ -160,6 +196,7 @@
                     obj.lastGoodScale = obj.scaleX
 
                     obj.setCoords()
+                    updateClipPath(obj.getBoundingRect())
                 }
             })
 
@@ -199,6 +236,7 @@
             obj.setCoords()
         });
 
+        updateClipPath(cropRect.getBoundingRect())
         canvas.renderAll()
     }
 
@@ -326,16 +364,18 @@
     }
 
     function reset() {
-        for (const arrow of markers) {
-            canvas.remove(arrow)
-        }
-
         rotate(-rotation)
         flipH = false
         flipV = false
 
+        // reset crop
+
         contrast = 0
         brightness = 0
+
+        for (const arrow of markers) {
+            canvas.remove(arrow)
+        }
 
         canvas.renderAll()
     }
@@ -443,15 +483,17 @@
 
         <hr>
 
-        <div>
-            <button class="btn btn-secondary" on:click={() => reset()}>
-                Reset
-            </button>
+        <button class="btn btn-secondary" on:click={() => reset()}>
+            Reset to original
+        </button>
 
-            <button class="btn btn-primary" on:click={() => downloadImage()}>
-                Download image
-            </button>
-        </div>
+        <button class="btn btn-primary" on:click={() => downloadImage()}>
+            Save and close
+        </button>
+
+        <button class="btn btn-primary" on:click={() => downloadImage()}>
+            Save a copy
+        </button>
     </div>
 </div>
 
