@@ -72,7 +72,7 @@
 
     onMount(() => {
         canvas = new Canvas(canvasElement, {
-            backgroundColor: "#333",
+            backgroundColor: "dimgray",
             preserveObjectStacking: true
         })
 
@@ -381,14 +381,27 @@
     }
 </script>
 
-<div style="display: flex; gap: 1rem; max-width: 1180px">
+<div>
+    <div class="alert alert-warning">
+        Low resolution
+    </div>
+
+    <div class="alert alert-warning">
+        Text?
+    </div>
+</div>
+
+<hr>
+
+
+<div style="display: flex; max-width: 1200px">
     <div class="main" style="flex-grow: 1">
         <div id="canvasContainer">
             <canvas bind:this={canvasElement}></canvas>
         </div>
     </div>
 
-    <div style="display: flex; flex-direction: column; padding: 1rem">
+    <div style="display: flex; flex-direction: column; padding: 1rem 1rem 0 1rem">
         <div style="display: flex; flex-grow: 1; gap: 1rem">
             <div style="display: flex; flex-direction: column">
                 <div class="info">
@@ -396,17 +409,15 @@
                 </div>
 
                 <div>
-                    <button type="button" class="btn btn-outline-secondary" class:active={flipH}
-                            on:click={() => flipH = !flipH}>
+                    <button class="btn btn-outline-secondary" class:active={flipH} on:click={() => flipH = !flipH}
+                            type="button">
                         <i class="bi bi-symmetry-vertical"></i>
                     </button>
-                    <button type="button" class="btn btn-outline-secondary" class:active={flipV}
-                            on:click={() => flipV = !flipV}>
+                    <button class="btn btn-outline-secondary" class:active={flipV} on:click={() => flipV = !flipV}
+                            type="button">
                         <i class="bi bi-symmetry-horizontal"></i>
                     </button>
-                </div>
 
-                <div>
                     <button class="btn btn-outline-secondary" on:click={() => rotate(90)}>
                         <i class="bi bi-arrow-clockwise"></i>
                     </button>
@@ -420,13 +431,17 @@
                     Crop
                 </div>
 
-                <button class="btn btn-outline-secondary" on:click={activateCrop}>
-                    <i class="bi bi-crop me-2"></i>
-                    Crop
-                </button>
-            </div>
+                <div>
+                    <button class="btn btn-outline-secondary" on:click={activateCrop}>
+                        <i class="bi bi-crop me-2"></i>
+                        Crop
+                    </button>
+                    <button class="btn btn-outline-danger" on:click={activateCrop} disabled>
+                        <i class="bi bi-x-lg me-2"></i>
+                        Reset
+                    </button>
+                </div>
 
-            <div style="display: flex; flex-direction: column">
                 <div class="info">
                     Adjust image
                 </div>
@@ -464,38 +479,31 @@
                         <i class="bi bi-square-fill"></i>
                     </button>
 
-                    <button class="btn btn-danger" on:click={deleteSelectedMarker} disabled={!markers.includes(activeMarker)}>
+                    <button class="btn btn-outline-danger" disabled={!markers.includes(activeMarker)}
+                            on:click={deleteSelectedMarker}>
                         <i class="bi bi-trash"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <div>
-            <div class="alert alert-warning">
-                Low resolution
-            </div>
-
-            <div class="alert alert-warning">
-                Text?
-            </div>
-        </div>
-
-        <hr>
-
-        <button class="btn btn-secondary" on:click={() => reset()}>
-            Reset to original
+        <button class="btn btn-outline-secondary mb-4" on:click={() => reset()}>
+            Original image
         </button>
 
-        <button class="btn btn-primary" on:click={() => downloadImage()}>
-            Save and close
-        </button>
-
-        <button class="btn btn-primary" on:click={() => downloadImage()}>
+        <button class="btn btn-lg btn-primary" on:click={() => downloadImage()}>
+            <i class="bi bi-file-earmark-plus me-1"></i>
             Save a copy
+        </button>
+
+        <button class="btn btn-lg btn-primary" on:click={() => downloadImage()}>
+            <i class="bi bi-file-earmark-check me-1"></i>
+            Save and close
         </button>
     </div>
 </div>
+
+<hr class="my-5">
 
 <div class="main">
     <img alt="Result" bind:this={imageElement}>
@@ -505,13 +513,12 @@
     .main {
         padding: 1rem;
         border: 2px dashed darkblue;
-        max-height: 800px;
+        max-height: 900px;
     }
 
     #canvasContainer {
         max-height: 800px;
         aspect-ratio: 1 / 1;
-        padding: 0;
     }
 
     canvas {
