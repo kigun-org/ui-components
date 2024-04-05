@@ -4,9 +4,7 @@
 
     import Select from "./lib/Select.svelte";
     import UploadFolder from "./lib/UploadFolder.svelte";
-    import ImageEditor from "./lib/ImageEditor.svelte";
     import ImageUpload from "./lib/ImageUpload.svelte";
-    import ImageEditor2 from "./lib/ImageEditor2.svelte";
 
     let imageUploadDialog
     let imageUploadComponent
@@ -39,24 +37,19 @@
 
 <main>
     <div class="row mb-5">
-        <h1>ImageEditor2 (fabric.js based)</h1>
-        <ImageEditor2 />
+        <h1>ImageUpload dialog</h1>
+
+        <div class="d-flex align-items-center justify-content-center gap-2">
+            {#if imageUploaded}
+                <div class="bg-success-subtle d-flex align-items-center px-3">
+                    <i class="bi bi-check-lg text-success fs-3 me-2"></i>
+                    <span>Uploaded</span>
+                </div>
+            {:else}
+                <button on:click={() => imageUploadDialog.showModal()}>click me</button>
+            {/if}
+        </div>
     </div>
-
-<!--    <div class="row mb-5">-->
-<!--        <h1>ImageUpload dialog</h1>-->
-
-<!--        <div class="d-flex align-items-center justify-content-center gap-2">-->
-<!--            {#if imageUploaded}-->
-<!--                <div class="bg-success-subtle d-flex align-items-center px-3">-->
-<!--                    <i class="bi bi-check-lg text-success fs-3 me-2"></i>-->
-<!--                    <span>Uploaded</span>-->
-<!--                </div>-->
-<!--            {:else}-->
-<!--                <button on:click={() => imageUploadDialog.showModal()}>click me</button>-->
-<!--            {/if}-->
-<!--        </div>-->
-<!--    </div>-->
 
 <!--    <form method="post" action="/test" class="container">-->
 <!--        <div class="row mb-5">-->
@@ -90,7 +83,7 @@
 </main>
 
 <dialog bind:this={imageUploadDialog}>
-    <div style="width: 50rem">
+    <div style="min-width: 60rem">
         <ImageUpload bind:this={imageUploadComponent}
                      galleryUrl="/1/images"
                      upload={{url:"/1/images", params: {a:"b"}}}

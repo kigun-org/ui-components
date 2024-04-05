@@ -1,12 +1,9 @@
 <svelte:options customElement={{tag: "image-upload", shadow: 'none'}}/>
 <script>
-    import ImageEditor from "./ImageEditor.svelte";
+    import ImageEditor2 from "./ImageEditor.svelte";
     import SelectImage from "./SelectImage.svelte";
-    import {createEventDispatcher, onMount} from "svelte";
+    import {onMount} from "svelte";
 
-    const dispatch = createEventDispatcher()
-
-    export let upload
     export let galleryUrl = undefined
     export let imageBlob = undefined
 
@@ -64,6 +61,71 @@
         imageBlob = ev.target.files[0]
     }
 
+    function saveCallback(blob) {
+        return new Promise((resolve, reject) => {
+            console.log("saving ...", blob.size)
+
+            // const formData = new FormData()
+            //
+            // if (upload.params !== undefined) {
+            //     for (const param in upload.params) {
+            //         formData.append(param, upload.params[param])
+            //     }
+            // }
+            //
+            // const today = new Date().toISOString().slice(0, 10).replaceAll('-', '')
+            // formData.append('uploaded_file', blob, `${today}.webp`)
+            //
+            // const req = new XMLHttpRequest()
+            // req.open("POST", upload.url)
+            //
+            // // req.upload.onprogress = (event) => {
+            // //     console.log(event)
+            // //     // update progress
+            // // }
+            //
+            // req.onreadystatechange = () => {
+            //     if (req.readyState === XMLHttpRequest.DONE) {
+            //         uploading = false
+            //
+            //         if (req.status === 200) {
+            //             uploadComplete = true
+            //             dispatch('uploadComplete', null)
+            //         } else {
+            //             uploadError = true
+            //             uploadMessage = `Error: ${req.status} ${req.statusText}`
+            //             dispatch('uploadError', null)
+            //         }
+            //     }
+            // }
+            //
+            // // req.onabort = (event) => {
+            // //     console.log("Upload aborted.", event)
+            // //     uploading = false
+            // //     uploadMessage = "Upload aborted."
+            // // }
+            //
+            // req.onerror = (event) => {
+            //     uploading = false
+            //     uploadError = true
+            //     if (event.target.statusText === '') {
+            //         uploadMessage = `Error uploading file.`
+            //     } else {
+            //         uploadMessage = `Error: ${req.status} ${event.target.statusText}`
+            //     }
+            //     dispatch('uploadError', null)
+            // }
+            //
+            // req.send(formData)
+
+            resolve("success")
+        })
+    }
+
+    function saveAsACopyCallback(blob) {
+        return new Promise((e) => console.log("saving as a copy ...", blob.size))
+    }
+
     onMount(() => {
         document.addEventListener('paste', async (e) => {
             e.preventDefault()
@@ -82,9 +144,8 @@
 <div class="upload-container" role="form"
      on:dragover={handleDragOver} on:drop={handleDrop}>
     {#if imageBlob !== undefined}
-        <ImageEditor originalImageBlob={imageBlob} {validators}
-                     upload={upload}
-                     on:uploadComplete={() => dispatch('uploadComplete', null)}/>
+        <ImageEditor2 originalImageBlob={imageBlob} {validators}
+                      saveCallback={saveCallback} saveAsACopyCallback={saveAsACopyCallback} />
     {:else if showBrowser}
         <div class="browse text-start p-2 d-flex flex-column">
             <div class="d-flex align-items-center justify-content-between my-2">
