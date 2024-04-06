@@ -8,7 +8,6 @@
     let warnings = []
 
     export let saveCallback
-    export let saveAsACopyCallback
 
     let saving = false
 
@@ -473,17 +472,6 @@
             })
         })
     }
-
-    function saveImageAsACopy() {
-        // start loading
-        console.log("Saving as a copy ...")
-
-        saveAsACopyCallback(originalImageBlob).then((result) => {
-            console.log("Finished saving as a copy", result)
-        }).catch((e) => {
-            console.log("Error saving as a copy", e)
-        })
-    }
 </script>
 
 <div style="display: flex; gap: 1rem; max-width: 1200px">
@@ -598,13 +586,6 @@
         <button class="btn btn-outline-secondary mb-2" on:click={() => reset()}>
             Reset changes
         </button>
-
-        <div style="position: relative; width: 100%">
-            <button class="btn btn-lg btn-primary w-100" on:click={saveImageAsACopy}>
-                <i class="bi bi-file-earmark-plus me-1"></i>
-                Save a copy
-            </button>
-        </div>
 
         <div style="position: relative; width: 100%">
             <button class="btn btn-lg btn-primary w-100" on:click={saveImage}>

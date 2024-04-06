@@ -114,10 +114,6 @@
         })
     }
 
-    function saveAsACopyCallback(blob) {
-        return new Promise((e) => console.log("saving as a copy ...", blob.size))
-    }
-
     onMount(() => {
         document.addEventListener('paste', async (e) => {
             e.preventDefault()
@@ -135,8 +131,7 @@
 
 <div class="upload-container" on:dragover={handleDragOver} on:drop={handleDrop} role="form">
     {#if imageBlob !== undefined}
-        <ImageEditor originalImageBlob={imageBlob} {validators}
-                     saveCallback={saveCallback} saveAsACopyCallback={saveAsACopyCallback}/>
+        <ImageEditor originalImageBlob={imageBlob} {validators} saveCallback={saveCallback} />
     {:else if showBrowser}
         <div class="browse text-start p-2 d-flex flex-column">
             <div class="d-flex align-items-center justify-content-between my-2">
@@ -170,7 +165,7 @@
             {#if galleryURL !== undefined}
                 <div on:click={showBrowsePanel}>
                     <i class="bi bi-cloud fs-1"></i>
-                    <span>Select an online image</span>
+                    <span>Select an existing image</span>
                 </div>
             {/if}
         </div>
