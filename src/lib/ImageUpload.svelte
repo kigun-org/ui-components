@@ -75,7 +75,7 @@
             }
 
             const today = new Date().toISOString().slice(0, 10).replaceAll('-', '')
-            formData.append('uploaded_file', blob, `${today}.webp`)
+            formData.append('uploaded_file', blob, `${today}.png`)
 
             const req = new XMLHttpRequest()
             req.open("POST", upload.url)
