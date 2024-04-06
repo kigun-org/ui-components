@@ -5,7 +5,7 @@
     export let originalImageBlob
 
     export let validators
-    let warnings = ["low resolution", "contains text?"]
+    let warnings = []
 
     export let saveCallback
     export let saveAsACopyCallback
@@ -40,21 +40,20 @@
         canvas.renderAll()
     }
 
-    // function validate(imageBlob, validators) {
-    //     const testImage = new Image()
-    //
-    //     testImage.onload = () => {
-    //         warnings = []
-    //         for (const validator of validators) {
-    //             if (validator.test(testImage)) {
-    //                 warnings = [...warnings, validator.message]
-    //             }
-    //         }
-    //     }
-    //
-    //     const URLObj = window.URL || window.webkitURL
-    //     testImage.src = URLObj.createObjectURL(imageBlob)
-    // }
+    function validate(imageDataURL, validators) {
+        const testImage = new Image()
+
+        testImage.onload = () => {
+            warnings = []
+            for (const validator of validators) {
+                if (validator.test(testImage)) {
+                    warnings = [...warnings, validator.message]
+                }
+            }
+        }
+
+        testImage.src = imageDataURL
+    }
 
     function hideWarning(ev) {
         ev.target.parentElement.classList.add("d-none")
@@ -66,10 +65,11 @@
             preserveObjectStacking: true
         })
 
-        // validate(originalImageBlob, validators)
 
         const URLObj = window.URL || window.webkitURL
         const imageDataURL = URLObj.createObjectURL(originalImageBlob)
+
+        validate(imageDataURL, validators)
 
         FabricImage.fromURL(imageDataURL).then((img) => {
             canvasImage = img
@@ -445,8 +445,6 @@
     }
 
     function saveImage() {
-        // start loading
-        console.log("Saving ...")
         saving = true
 
         canvas.discardActiveObject()
@@ -458,6 +456,10 @@
         const y_min = Math.min(coords[0].y, coords[1].y, coords[2].y, coords[3].y)
         const y_max = Math.max(coords[0].y, coords[1].y, coords[2].y, coords[3].y)
 
+        /*
+         * Output PNG (lossless) to upload to server
+         * Could add ("image/webp", 1) arguments, but not supported by Safari
+         */
         canvas.toCanvasElement(1, {
             left: x_min,
             top: y_min,
@@ -465,12 +467,11 @@
             height: y_max - y_min - 1
         }).toBlob((blob) => {
             saveCallback(blob).then((result) => {
-                console.log("Finished saving", result)
                 saving = false
             }).catch((e) => {
-                console.log("Error saving as a copy", e)
+                saving = false
             })
-        }, "image/webp", 0.90)
+        })
     }
 
     function saveImageAsACopy() {

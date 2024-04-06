@@ -85,8 +85,8 @@
 <dialog bind:this={imageUploadDialog}>
     <div style="min-width: 60rem">
         <ImageUpload bind:this={imageUploadComponent}
-                     galleryUrl="/1/images"
-                     upload={{url:"/1/images", params: {a:"b"}}}
+                     galleryURL="/1/images"
+                     upload={ {url:"/1/images", params: {a:"b"}} }
                      on:uploadComplete={handleUploadComplete}/>
     </div>
 </dialog>

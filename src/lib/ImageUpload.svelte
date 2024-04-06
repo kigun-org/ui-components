@@ -1,11 +1,14 @@
 <svelte:options customElement={{tag: "image-upload", shadow: 'none'}}/>
 <script>
-    import ImageEditor2 from "./ImageEditor.svelte";
+    import ImageEditor from "./ImageEditor.svelte";
     import SelectImage from "./SelectImage.svelte";
-    import {onMount} from "svelte";
+    import {createEventDispatcher, onMount} from "svelte";
 
-    export let galleryUrl = undefined
-    export let imageBlob = undefined
+    const dispatch = createEventDispatcher()
+
+    let imageBlob
+    export let galleryURL
+    export let upload
 
     let showBrowser = false
 
@@ -14,10 +17,10 @@
             message: "Low resolution image. Upload the original high resolution image.",
             test: (image) => Math.min(image.width, image.height) < 500
         },
-        // {
-        //     message: "Image contains text. Use the draw tool to remove any patient personal details.",
-        //     test: () => false
-        // }
+        {
+            message: "Image contains text. Use the draw tool to remove any patient personal details.",
+            test: () => false
+        }
     ]
 
     function showBrowsePanel() {
@@ -63,62 +66,51 @@
 
     function saveCallback(blob) {
         return new Promise((resolve, reject) => {
-            console.log("saving ...", blob.size)
+            const formData = new FormData()
 
-            // const formData = new FormData()
-            //
-            // if (upload.params !== undefined) {
-            //     for (const param in upload.params) {
-            //         formData.append(param, upload.params[param])
-            //     }
-            // }
-            //
-            // const today = new Date().toISOString().slice(0, 10).replaceAll('-', '')
-            // formData.append('uploaded_file', blob, `${today}.webp`)
-            //
-            // const req = new XMLHttpRequest()
-            // req.open("POST", upload.url)
-            //
-            // // req.upload.onprogress = (event) => {
-            // //     console.log(event)
-            // //     // update progress
-            // // }
-            //
-            // req.onreadystatechange = () => {
-            //     if (req.readyState === XMLHttpRequest.DONE) {
-            //         uploading = false
-            //
-            //         if (req.status === 200) {
-            //             uploadComplete = true
-            //             dispatch('uploadComplete', null)
-            //         } else {
-            //             uploadError = true
-            //             uploadMessage = `Error: ${req.status} ${req.statusText}`
-            //             dispatch('uploadError', null)
-            //         }
-            //     }
-            // }
-            //
-            // // req.onabort = (event) => {
-            // //     console.log("Upload aborted.", event)
-            // //     uploading = false
-            // //     uploadMessage = "Upload aborted."
-            // // }
-            //
-            // req.onerror = (event) => {
+            if (upload.params !== undefined) {
+                for (const param in upload.params) {
+                    formData.append(param, upload.params[param])
+                }
+            }
+
+            const today = new Date().toISOString().slice(0, 10).replaceAll('-', '')
+            formData.append('uploaded_file', blob, `${today}.webp`)
+
+            const req = new XMLHttpRequest()
+            req.open("POST", upload.url)
+
+            req.onreadystatechange = () => {
+                if (req.readyState === XMLHttpRequest.DONE) {
+                    if (req.status === 200) {
+                        resolve("success")
+                        dispatch('uploadComplete', null)
+                    } else {
+                        // uploadError = true
+                        // uploadMessage = `Error: ${req.status} ${req.statusText}`
+                        reject("error")
+                        dispatch('uploadError', null)
+                    }
+                }
+            }
+
+            // req.onabort = (event) => {
+            //     console.log("Upload aborted.", event)
             //     uploading = false
-            //     uploadError = true
-            //     if (event.target.statusText === '') {
-            //         uploadMessage = `Error uploading file.`
-            //     } else {
-            //         uploadMessage = `Error: ${req.status} ${event.target.statusText}`
-            //     }
-            //     dispatch('uploadError', null)
+            //     uploadMessage = "Upload aborted."
             // }
-            //
-            // req.send(formData)
 
-            resolve("success")
+            req.onerror = (event) => {
+                // uploadError = true
+                // if (event.target.statusText === '') {
+                //     uploadMessage = `Error uploading file.`
+                // } else {
+                //     uploadMessage = `Error: ${req.status} ${event.target.statusText}`
+                // }
+                dispatch('uploadError', null)
+            }
+
+            req.send(formData)
         })
     }
 
@@ -141,11 +133,10 @@
     })
 </script>
 
-<div class="upload-container" role="form"
-     on:dragover={handleDragOver} on:drop={handleDrop}>
+<div class="upload-container" on:dragover={handleDragOver} on:drop={handleDrop} role="form">
     {#if imageBlob !== undefined}
-        <ImageEditor2 originalImageBlob={imageBlob} {validators}
-                      saveCallback={saveCallback} saveAsACopyCallback={saveAsACopyCallback} />
+        <ImageEditor originalImageBlob={imageBlob} {validators}
+                     saveCallback={saveCallback} saveAsACopyCallback={saveAsACopyCallback}/>
     {:else if showBrowser}
         <div class="browse text-start p-2 d-flex flex-column">
             <div class="d-flex align-items-center justify-content-between my-2">
@@ -155,7 +146,7 @@
                 <button class="btn btn-close" on:click={() => showBrowser = false}></button>
             </div>
 
-            <SelectImage url={galleryUrl} on:select={imageSelected}/>
+            <SelectImage url={galleryURL} on:select={imageSelected}/>
         </div>
     {:else}
         <div class="instructions">
@@ -176,7 +167,7 @@
                 <span>Paste an image (ctrl/⌘ + v)</span>
             </div>
 
-            {#if galleryUrl !== undefined}
+            {#if galleryURL !== undefined}
                 <div on:click={showBrowsePanel}>
                     <i class="bi bi-cloud fs-1"></i>
                     <span>Select an online image</span>
