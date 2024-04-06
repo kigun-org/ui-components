@@ -64,7 +64,6 @@
             preserveObjectStacking: true
         })
 
-
         const URLObj = window.URL || window.webkitURL
         const imageDataURL = URLObj.createObjectURL(originalImageBlob)
 

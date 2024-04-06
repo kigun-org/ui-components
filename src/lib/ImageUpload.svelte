@@ -6,7 +6,7 @@
 
     const dispatch = createEventDispatcher()
 
-    let imageBlob
+    export let imageBlob
     export let galleryURL
     export let upload
 
