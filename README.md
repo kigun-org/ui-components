@@ -2,9 +2,6 @@
 
 This project provides several user interface components used in our projects, including:
 - `select-component`: a multi-select dropdown component with autocomplete
-- `image-upload` / `image-editor`: image editor and upload component, with rotation, flipping and basic
-drawing functionality
-- `select-image`: select image from online gallery component
 - `upload-folder`: upload folder component, allows user to select a folder on their computer 
 to upload and gives access to all files within that folder
 
