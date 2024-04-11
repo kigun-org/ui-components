@@ -5,16 +5,6 @@
     import Select from "./lib/Select.svelte";
     import UploadFolder from "./lib/UploadFolder.svelte";
 
-    let imageUploadDialog
-    let imageUploadComponent
-    let imageUploaded = false
-
-    function handleUploadComplete() {
-        imageUploadDialog.close()
-        imageUploadComponent.$destroy() // free some memory
-        imageUploaded = true
-    }
-
     const states = [
         {label: "California", value: 1},
         {label: "Arizona", value: 2},
