@@ -2,6 +2,7 @@
     import 'bootstrap-icons/font/bootstrap-icons.css'
     import 'bootstrap/dist/css/bootstrap.css'
 
+    import Lightbox from "./lib/Lightbox.svelte";
     import Select from "./lib/Select.svelte";
     import UploadFolder from "./lib/UploadFolder.svelte";
 
@@ -25,6 +26,11 @@
 </script>
 
 <main>
+
+    <Lightbox />
+
+    <hr>
+
     <form method="post" action="/test" class="container">
         <div class="row mb-5">
             <h1>Select component</h1>
@@ -43,6 +49,8 @@
                         options={states} selectedItems={[4,3]} multiple={true} on:change={valueChanged}/>
             </div>
         </div>
+
+        <hr>
 
         <div class="row mb-5">
             <h1>UploadFolder component</h1>

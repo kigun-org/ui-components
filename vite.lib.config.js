@@ -28,6 +28,7 @@ export default defineConfig({
         },
         lib: {
             entry: [
+                resolve(__dirname, 'src/lib/Lightbox.svelte'),
                 resolve(__dirname, 'src/lib/Select.svelte'),
                 resolve(__dirname, 'src/lib/UploadFolder.svelte'),
             ],
