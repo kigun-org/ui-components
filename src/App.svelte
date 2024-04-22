@@ -24,38 +24,56 @@
         console.log("changed: ", ev.detail.fileList)
     }
 
-    const galleryItems = [
-        {
-            "id": 1,
-            "type": "image",
-            "url": "https://images.unsplash.com/photo-1712679408447-3245b6bc7c16?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            "thumbnail": "https://images.unsplash.com/photo-1712679408447-3245b6bc7c16?q=80&h=300"
-        },
-        {
-            "id": 2,
-            "type": "image",
-            "url": "https://images.unsplash.com/photo-1706459733269-8bbe4152ec3f?q=80&w=3270&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            "thumbnail": "https://images.unsplash.com/photo-1706459733269-8bbe4152ec3f?q=80&h=300"
-        },
-        {
-            "id": 3,
-            "type": "image",
-            // "url": "https://images.unsplash.com/photo-1706606992618-9108da774e75?q=80&w=3164&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-            "url": "https://images.unsplash.com/photo-1706606992618-9108da774e75?q=80&h=300",
-            "thumbnail": "https://images.unsplash.com/photo-1706606992618-9108da774e75?q=80&h=300"
-        },
-        {
-            "id": 4,
-            "type": "video",
-            "url": "https://demo.kigun.org/data/original/2023/10/gbr_Afr976l.webm",
-            "thumbnail": "https://peach.blender.org/wp-content/themes/bf-bunny/graphics/header1.jpg"
-        }
-    ]
+    // let galleryItems = [
+    //     {
+    //         "id": 1,
+    //         "type": "image",
+    //         "url": "https://images.unsplash.com/photo-1712679408447-3245b6bc7c16?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    //         "thumbnail": "https://images.unsplash.com/photo-1712679408447-3245b6bc7c16?q=80&h=300"
+    //     },
+    //     {
+    //         "id": 2,
+    //         "type": "image",
+    //         "url": "https://images.unsplash.com/photo-1706459733269-8bbe4152ec3f?q=80&w=3270&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    //         "thumbnail": "https://images.unsplash.com/photo-1706459733269-8bbe4152ec3f?q=80&h=300"
+    //     },
+    //     {
+    //         "id": 3,
+    //         "type": "image",
+    //         // "url": "https://images.unsplash.com/photo-1706606992618-9108da774e75?q=80&w=3164&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    //         "url": "https://images.unsplash.com/photo-1706606992618-9108da774e75?q=80&h=300",
+    //         "thumbnail": "https://images.unsplash.com/photo-1706606992618-9108da774e75?q=80&h=300"
+    //     },
+    //     {
+    //         "id": 4,
+    //         "type": "video",
+    //         "url": "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    //         "thumbnail": "https://peach.blender.org/wp-content/themes/bf-bunny/graphics/header1.jpg"
+    //     }
+    // ]
 </script>
 
 <main>
+    <div class="row">
+        <a href="https://images.unsplash.com/photo-1712679408447-3245b6bc7c16?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+           data-toggle="lightbox" data-gallery="example-gallery" class="col-sm-4">
+            <img src="https://images.unsplash.com/photo-1712679408447-3245b6bc7c16?q=80&h=300" class="img-fluid">
+        </a>
+        <a href="https://images.unsplash.com/photo-1706459733269-8bbe4152ec3f?q=80&w=3270&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+           data-toggle="lightbox" data-gallery="example-gallery" class="col-sm-4">
+            <img src="https://images.unsplash.com/photo-1706459733269-8bbe4152ec3f?q=80&h=300" class="img-fluid">
+        </a>
+        <a href="https://images.unsplash.com/photo-1706606992618-9108da774e75?q=80&h=300"
+           data-toggle="lightbox" data-gallery="example-gallery" class="col-sm-4">
+            <img src="https://images.unsplash.com/photo-1706606992618-9108da774e75?q=80&h=300" class="img-fluid">
+        </a>
+        <a href="https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+           data-toggle="lightbox" data-gallery="example-gallery" data-type="video" class="col-sm-4">
+            <img src="https://peach.blender.org/wp-content/themes/bf-bunny/graphics/header1.jpg" class="img-fluid">
+        </a>
+    </div>
 
-    <Lightbox items={galleryItems} />
+    <Lightbox gallery="example-gallery" />
 
     <hr>
 
