@@ -30,8 +30,8 @@ export default defineConfig({
         emptyOutDir: entries.length > 1,
         rollupOptions: {
             external: [
-                'bootstrap/dist/css/bootstrap.css',
-                'bootstrap-icons/font/bootstrap-icons.css'
+                'bootstrap',
+                'bootstrap-icons'
             ],
             output: {
                 manualChunks:

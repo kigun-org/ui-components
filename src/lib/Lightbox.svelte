@@ -1,7 +1,6 @@
 <svelte:options customElement={{tag: "lightbox-gallery", shadow: 'none'}}/>
 <script lang="ts">
-    import Modal from "bootstrap/js/dist/modal";
-    import Carousel from "bootstrap/js/dist/carousel";
+    import {Modal, Carousel} from "bootstrap";
     import {onMount} from "svelte";
 
     export let items: any[] = []
@@ -132,7 +131,6 @@
         display: flex;
         justify-items: center;
         height: 100%;
-        /*background: blue;*/
     }
 
     .carousel-item div {
