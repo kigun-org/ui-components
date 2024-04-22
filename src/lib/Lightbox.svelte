@@ -61,7 +61,7 @@
     })
 </script>
 
-<div bind:this={modalElement} class="modal fade active" tabindex="-1">
+<div bind:this={modalElement} class="modal fade" tabindex="-1">
     <div class="modal-dialog modal-fullscreen p-lg-3">
         <div class="modal-content">
             <div bind:this={carouselElement} class="carousel slide" id="carouselExample">
@@ -117,7 +117,7 @@
 
 <style>
     /*.modal-backdrop.show {*/
-    /*opacity: 0.85 !important;*/
+    /*    opacity: 0.85 !important;*/
     /*}*/
 
     .carousel {
