@@ -1,5 +1,6 @@
 <script lang="ts">
-    import {Carousel, Modal} from "bootstrap/dist/js/bootstrap.esm";
+    import Modal from "bootstrap/js/dist/modal";
+    import Carousel from "bootstrap/js/dist/carousel";
     import {onMount} from "svelte";
 
     export let items: any[]

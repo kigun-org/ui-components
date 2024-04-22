@@ -1,3 +1,4 @@
+<svelte:options customElement={{tag: "lightbox-gallery", shadow: 'none'}} />
 <script lang="ts">
     import LightboxModal from "./Lightbox/LightboxModal.svelte";
 
