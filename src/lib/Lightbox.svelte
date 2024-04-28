@@ -33,6 +33,8 @@
             let mediaType = "image"
             if (el.dataset.type === "video") {
                 mediaType = "video"
+            } else if (el.dataset.type === "pdf") {
+                mediaType = "pdf"
             }
 
             items.push({
@@ -68,18 +70,20 @@
                     {#if modalVisible}
                         {#each items as item, index}
                             <div class="carousel-item" class:active={selectedItem === index}>
+                                <div>
                                 {#if item.type === "image"}
-                                    <div>
-                                        <img src={item.url} alt="">
-                                    </div>
+                                    <img src={item.url} alt="">
                                 {:else if item.type === "video"}
-                                    <div>
-                                        <video controls controlslist="nodownload"
-                                               poster={item.thumbnail} src={item.url}>
-                                            Your browser doesn't seem to support HTML video.
-                                        </video>
-                                    </div>
+                                    <video controls controlslist="nodownload"
+                                           poster={item.thumbnail} src={item.url}>
+                                        Your browser doesn't seem to support HTML video.
+                                    </video>
+                                {:else if item.type === "pdf"}
+                                    <object data={item.url} type="application/pdf" title="Document">
+                                        Your browser doesn't support viewing PDFs.
+                                    </object>
                                 {/if}
+                                </div>
                             </div>
                         {/each}
                     {/if}
@@ -143,6 +147,11 @@
     .carousel-item div img, .carousel-item div video {
         max-height: 100%;
         max-width: 100%;
+    }
+
+    .carousel-item div object {
+        height: 100%;
+        width: 100%;
     }
 
     .carousel-control-close {
