@@ -46,7 +46,9 @@
 
         modal = new Modal(modalElement, {})
         modalElement.addEventListener('shown.bs.modal', () => {
-            nextElement.focus()
+            if (nextElement !== undefined) {
+                nextElement.focus()
+            }
         })
         modalElement.addEventListener('hidden.bs.modal', () => {
             modalVisible = false
@@ -88,17 +90,19 @@
                         {/each}
                     {/if}
                 </div>
-                <button class="carousel-control-prev" on:click={() => carousel.prev()} type="button">
-                    <span aria-hidden="true" class="carousel-control-prev-icon"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button bind:this={nextElement} class="carousel-control-next" on:click={() => carousel.next()}
-                        type="button">
-                    <span aria-hidden="true" class="carousel-control-next-icon"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
-                <div class="carousel-control-close p-4 p-lg-3" data-bs-theme="dark">
-                    <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+                {#if items.length > 1}
+                    <button class="carousel-control-prev" on:click={() => carousel.prev()} type="button">
+                        <span aria-hidden="true" class="carousel-control-prev-icon"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button bind:this={nextElement} class="carousel-control-next" on:click={() => carousel.next()}
+                            type="button">
+                        <span aria-hidden="true" class="carousel-control-next-icon"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                {/if}
+                <div class="carousel-control-close" data-bs-theme="dark">
+                    <button aria-label="Close" class="btn-close p-4" data-bs-dismiss="modal" type="button"></button>
                 </div>
             </div>
         </div>
@@ -134,7 +138,7 @@
     .carousel-inner {
         display: flex;
         justify-items: center;
-        height: 100vh;
+        height: 100%;
     }
 
     .carousel-item div {
@@ -162,8 +166,17 @@
         transition: opacity .15s ease, background-color .15s ease;
     }
 
-    .carousel-control-next:focus, .carousel-control-next:hover, .carousel-control-prev:focus, .carousel-control-prev:hover {
+    .carousel-control-next:focus, .carousel-control-next:hover,
+    .carousel-control-prev:focus, .carousel-control-prev:hover {
         background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .carousel-control-close button {
+        transition: opacity .15s ease, background-color .15s ease;
+    }
+
+    .carousel-control-close button:focus, .carousel-control-close button:hover {
+        background-color: rgba(0, 0, 0, 0.1);
     }
 
     .carousel-control-close {
