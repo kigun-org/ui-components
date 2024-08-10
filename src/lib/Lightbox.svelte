@@ -71,18 +71,18 @@
                         {#each items as item, index}
                             <div class="carousel-item" class:active={selectedItem === index}>
                                 <div>
-                                {#if item.type === "image"}
-                                    <img src={item.url} alt="">
-                                {:else if item.type === "video"}
-                                    <video controls controlslist="nodownload"
-                                           poster={item.thumbnail} src={item.url}>
-                                        Your browser doesn't seem to support HTML video.
-                                    </video>
-                                {:else if item.type === "pdf"}
-                                    <object data={item.url} type="application/pdf" title="Document">
-                                        Your browser doesn't support viewing PDFs.
-                                    </object>
-                                {/if}
+                                    {#if item.type === "image"}
+                                        <img src={item.url} alt="">
+                                    {:else if item.type === "video"}
+                                        <video controls controlslist="nodownload"
+                                               poster={item.thumbnail} src={item.url}>
+                                            Your browser doesn't seem to support HTML video.
+                                        </video>
+                                    {:else if item.type === "pdf"}
+                                        <object data={item.url} type="application/pdf" title="Document">
+                                            Your browser doesn't support viewing PDFs.
+                                        </object>
+                                    {/if}
                                 </div>
                             </div>
                         {/each}
@@ -134,14 +134,16 @@
     .carousel-inner {
         display: flex;
         justify-items: center;
-        height: 100%;
+        height: 100vh;
     }
 
     .carousel-item div {
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
-        height: 100%;
+
+        height: 100vh;
     }
 
     .carousel-item div img, .carousel-item div video {
@@ -152,6 +154,16 @@
     .carousel-item div object {
         height: 100%;
         width: 100%;
+    }
+
+    .carousel-control-next, .carousel-control-prev {
+        top: 30vh;
+        bottom: 30vh;
+        transition: opacity .15s ease, background-color .15s ease;
+    }
+
+    .carousel-control-next:focus, .carousel-control-next:hover, .carousel-control-prev:focus, .carousel-control-prev:hover {
+        background-color: rgba(255, 255, 255, 0.1);
     }
 
     .carousel-control-close {
