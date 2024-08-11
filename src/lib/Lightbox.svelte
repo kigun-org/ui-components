@@ -1,7 +1,7 @@
 <svelte:options customElement={{tag: "lightbox-gallery", shadow: 'none'}}/>
 <script lang="ts">
     import {Modal, Carousel} from "bootstrap";
-    import {onMount, tick} from "svelte";
+    import {onMount} from "svelte";
 
     export let items: any[] = []
 
@@ -24,15 +24,7 @@
     }
 
     function fetchComments(item): Promise<string> {
-        return fetch(item.commentsURL).then((resp) => {
-            tick().then(() => {
-                if (typeof htmx !== 'undefined') {
-                    htmx.process(carouselElement)
-                }
-                return true
-            })
-            return resp.text()
-        })
+        return fetch(item.commentsURL).then((resp) => resp.text())
     }
 
     onMount(() => {
@@ -77,6 +69,26 @@
             })
         })
     })
+
+    // https://stackoverflow.com/questions/2592092/executing-script-elements-inserted-with-innerhtml
+    function setInnerHtml(elm, html) {
+        elm.innerHTML = html;
+        Array.from(elm.querySelectorAll("script")).forEach(oldScript => {
+            const newScript = document.createElement("script");
+            Array.from(oldScript.attributes)
+                .forEach(attr => newScript.setAttribute(attr.name, attr.value));
+            newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+            oldScript.parentNode.replaceChild(newScript, oldScript);
+        });
+    }
+
+    function processResponse(node, response) {
+        setInnerHtml(node, response)
+
+        if (typeof htmx !== 'undefined') {
+            htmx.process(node)
+        }
+    }
 </script>
 
 <div bind:this={modalElement} class="modal fade" tabindex="-1">
@@ -110,7 +122,7 @@
                                                         {#await fetchComments(item)}
                                                             <p class="p-2">Fetching comments ...</p>
                                                         {:then response}
-                                                            {@html response}
+                                                            <div use:processResponse={response}></div>
                                                         {:catch error}
                                                             <p class="p-2 bg-danger-subtle text-danger-emphasis">
                                                                 Could not fetch comments:<br>
