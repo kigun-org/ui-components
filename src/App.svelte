@@ -80,19 +80,19 @@
 
     <div class="row">
         <a href="https://images.unsplash.com/photo-1712679408447-3245b6bc7c16?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-           data-gallery="example-gallery-comment" data-comments-url="http://localhost:8000/comments" class="col-sm-4">
+           data-gallery="example-gallery-comment" data-comments-url="/comments/" class="col-sm-4">
             <img src="https://images.unsplash.com/photo-1712679408447-3245b6bc7c16?q=80&h=300" class="img-fluid">
         </a>
         <a href="https://images.unsplash.com/photo-1706459733269-8bbe4152ec3f?q=80&w=3270&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-           data-gallery="example-gallery-comment" data-comments-url="http://localhost:8000/comments" class="col-sm-4">
+           data-gallery="example-gallery-comment" data-comments-url="/comments/" class="col-sm-4">
             <img src="https://images.unsplash.com/photo-1706459733269-8bbe4152ec3f?q=80&h=300" class="img-fluid">
         </a>
         <a href="https://images.unsplash.com/photo-1706606992618-9108da774e75?q=80&h=300"
-           data-gallery="example-gallery-comment" data-comments-url="http://localhost:8000/comments" class="col-sm-4">
+           data-gallery="example-gallery-comment" data-comments-url="/comments/" class="col-sm-4">
             <img src="https://images.unsplash.com/photo-1706606992618-9108da774e75?q=80&h=300" class="img-fluid">
         </a>
         <a href="https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-           data-gallery="example-gallery-comment" data-comments-url="http://localhost:8000/comments" data-type="video" class="col-sm-4">
+           data-gallery="example-gallery-comment" data-comments-url="/comments/" data-type="video" class="col-sm-4">
             <img src="https://peach.blender.org/wp-content/themes/bf-bunny/graphics/header1.jpg" class="img-fluid">
         </a>
     </div>

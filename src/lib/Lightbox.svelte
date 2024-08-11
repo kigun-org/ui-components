@@ -1,7 +1,7 @@
 <svelte:options customElement={{tag: "lightbox-gallery", shadow: 'none'}}/>
 <script lang="ts">
     import {Modal, Carousel} from "bootstrap";
-    import {onMount} from "svelte";
+    import {onMount, tick} from "svelte";
 
     export let items: any[] = []
 
@@ -25,6 +25,12 @@
 
     function fetchComments(item): Promise<string> {
         return fetch(item.commentsURL).then((resp) => {
+            tick().then(() => {
+                if (typeof htmx !== 'undefined') {
+                    htmx.process(carouselElement)
+                }
+                return true
+            })
             return resp.text()
         })
     }
@@ -102,31 +108,14 @@
                                                 <div class="col-xs-12 col-lg-4">
                                                     <div class="p-3 bg-body-tertiary h-100">
                                                         {#await fetchComments(item)}
-                                                            <p>Fetching comments ...</p>
+                                                            <p class="p-2">Fetching comments ...</p>
                                                         {:then response}
                                                             {@html response}
                                                         {:catch error}
-                                                            <p style="color: red">
+                                                            <p class="p-2 bg-danger-subtle text-danger-emphasis">
                                                                 Could not fetch comments:<br>
                                                                 {error.message}
                                                             </p>
-
-                                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias, consectetur corporis dignissimos dolore ex explicabo fuga laborum maiores modi natus nesciunt, placeat quidem quis repellat, repellendus ullam vero! Quae, similique?</p>
-
-                                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                                                                Atque autem beatae blanditiis deleniti deserunt dicta
-                                                                dignissimos eius eos illum incidunt minus odit repudiandae
-                                                                rerum, sequi suscipit temporibus vero voluptatibus
-                                                                voluptatum.</p>
-                                                            <p>Accusamus, aspernatur assumenda blanditiis, enim fugiat iure
-                                                                necessitatibus neque quae quia repudiandae saepe sunt
-                                                                voluptates. Beatae consequuntur distinctio hic obcaecati
-                                                                quibusdam? Aspernatur culpa delectus, eos esse illum omnis
-                                                                reiciendis temporibus!</p>
-                                                            <p>A atque dicta eius inventore iste laboriosam obcaecati
-                                                                quaerat quis voluptas? Error impedit inventore laudantium
-                                                                maiores nisi odio pariatur similique soluta. Beatae dicta
-                                                                eveniet ex excepturi rem sed unde voluptate.</p>
                                                         {/await}
                                                     </div>
                                                 </div>
