@@ -23,6 +23,12 @@
         modalVisible = true
     }
 
+    function fetchComments(item): Promise<string> {
+        return fetch(item.commentsURL).then((resp) => {
+            return resp.text()
+        })
+    }
+
     onMount(() => {
         document.querySelectorAll(`[data-gallery="${gallery}"]`).forEach((el, index) => {
             el.addEventListener('click', (ev) => {
@@ -37,11 +43,14 @@
                 mediaType = "pdf"
             }
 
-            items.push({
+            let item = {
                 type: mediaType,
                 url: el.getAttribute('href'),
+                commentsURL: el.dataset.commentsUrl,
                 thumbnail: el.firstElementChild.getAttribute('src')
-            })
+            }
+
+            items.push(item)
         })
 
         modal = new Modal(modalElement, {})
@@ -72,20 +81,72 @@
                     {#if modalVisible}
                         {#each items as item, index}
                             <div class="carousel-item" class:active={selectedItem === index}>
-                                <div>
-                                    {#if item.type === "image"}
-                                        <img src={item.url} alt="">
-                                    {:else if item.type === "video"}
-                                        <video controls controlslist="nodownload"
-                                               poster={item.thumbnail} src={item.url}>
-                                            Your browser doesn't seem to support HTML video.
-                                        </video>
-                                    {:else if item.type === "pdf"}
-                                        <object data={item.url} type="application/pdf" title="Document">
-                                            Your browser doesn't support viewing PDFs.
-                                        </object>
-                                    {/if}
-                                </div>
+                                {#if item.commentsURL}
+                                    <div class="comment-panel">
+                                        <div class="card">
+                                            <div class="row">
+                                                <div class="col comment-image-panel">
+                                                    {#if item.type === "image"}
+                                                        <img src={item.url} alt="">
+                                                    {:else if item.type === "video"}
+                                                        <video controls controlslist="nodownload"
+                                                               poster={item.thumbnail} src={item.url}>
+                                                            Your browser doesn't seem to support HTML video.
+                                                        </video>
+                                                    {:else if item.type === "pdf"}
+                                                        <object data={item.url} type="application/pdf" title="Document">
+                                                            Your browser doesn't support viewing PDFs.
+                                                        </object>
+                                                    {/if}
+                                                </div>
+                                                <div class="col-xs-12 col-lg-4">
+                                                    {#await fetchComments(item)}
+                                                        <p>Fetching comments ...</p>
+                                                    {:then response}
+                                                        {@html response}
+                                                    {:catch error}
+                                                        <p style="color: red">
+                                                            Could not fetch comments:<br>
+                                                            {error.message}
+                                                        </p>
+
+                                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias, consectetur corporis dignissimos dolore ex explicabo fuga laborum maiores modi natus nesciunt, placeat quidem quis repellat, repellendus ullam vero! Quae, similique?</p>
+
+                                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                                                            Atque autem beatae blanditiis deleniti deserunt dicta
+                                                            dignissimos eius eos illum incidunt minus odit repudiandae
+                                                            rerum, sequi suscipit temporibus vero voluptatibus
+                                                            voluptatum.</p>
+                                                        <p>Accusamus, aspernatur assumenda blanditiis, enim fugiat iure
+                                                            necessitatibus neque quae quia repudiandae saepe sunt
+                                                            voluptates. Beatae consequuntur distinctio hic obcaecati
+                                                            quibusdam? Aspernatur culpa delectus, eos esse illum omnis
+                                                            reiciendis temporibus!</p>
+                                                        <p>A atque dicta eius inventore iste laboriosam obcaecati
+                                                            quaerat quis voluptas? Error impedit inventore laudantium
+                                                            maiores nisi odio pariatur similique soluta. Beatae dicta
+                                                            eveniet ex excepturi rem sed unde voluptate.</p>
+                                                    {/await}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {:else}
+                                    <div>
+                                        {#if item.type === "image"}
+                                            <img src={item.url} alt="">
+                                        {:else if item.type === "video"}
+                                            <video controls controlslist="nodownload"
+                                                   poster={item.thumbnail} src={item.url}>
+                                                Your browser doesn't seem to support HTML video.
+                                            </video>
+                                        {:else if item.type === "pdf"}
+                                            <object data={item.url} type="application/pdf" title="Document">
+                                                Your browser doesn't support viewing PDFs.
+                                            </object>
+                                        {/if}
+                                    </div>
+                                {/if}
                             </div>
                         {/each}
                     {/if}
@@ -106,19 +167,6 @@
                 </div>
             </div>
         </div>
-        <!--        <div class="modal-content">-->
-        <!--            <div class="modal-header">-->
-        <!--                <h5 class="modal-title">Modal title</h5>-->
-        <!--                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-        <!--            </div>-->
-        <!--            <div class="modal-body">-->
-        <!--                <p>Modal body text goes here.</p>-->
-        <!--            </div>-->
-        <!--            <div class="modal-footer">-->
-        <!--                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
-        <!--                <button type="button" class="btn btn-primary">Save changes</button>-->
-        <!--            </div>-->
-        <!--        </div>-->
     </div>
 </div>
 
@@ -141,13 +189,43 @@
         height: 100%;
     }
 
-    .carousel-item div {
+    .carousel-item > div {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
 
-        height: 100vh;
+        height: calc(100vh - 2rem);
+    }
+
+    .comment-panel {
+        padding: 0 15%;
+    }
+
+    .comment-panel .card {
+        width: 100%;
+        height: 100%;
+        overflow-y: scroll;
+    }
+
+    .comment-panel div.row {
+        max-height: 100%;
+
+        @media (min-width: 992px) {
+            height: 100%;
+        }
+    }
+
+    .comment-image-panel {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: calc(var(--bs-gutter-x) * 0.5);
+        background-color: var(--bs-tertiary-bg);
+
+        @media (min-width: 992px) {
+            height: 100%;
+        }
     }
 
     .carousel-item div img, .carousel-item div video {
