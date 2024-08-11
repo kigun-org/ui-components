@@ -76,7 +76,7 @@
 <div bind:this={modalElement} class="modal fade" tabindex="-1">
     <div class="modal-dialog modal-fullscreen p-lg-3">
         <div class="modal-content">
-            <div bind:this={carouselElement} class="carousel slide" id="carouselExample">
+            <div bind:this={carouselElement} class="carousel slide">
                 <div class="carousel-inner">
                     {#if modalVisible}
                         {#each items as item, index}
@@ -100,33 +100,35 @@
                                                     {/if}
                                                 </div>
                                                 <div class="col-xs-12 col-lg-4">
-                                                    {#await fetchComments(item)}
-                                                        <p>Fetching comments ...</p>
-                                                    {:then response}
-                                                        {@html response}
-                                                    {:catch error}
-                                                        <p style="color: red">
-                                                            Could not fetch comments:<br>
-                                                            {error.message}
-                                                        </p>
+                                                    <div class="p-3 bg-body-tertiary h-100">
+                                                        {#await fetchComments(item)}
+                                                            <p>Fetching comments ...</p>
+                                                        {:then response}
+                                                            {@html response}
+                                                        {:catch error}
+                                                            <p style="color: red">
+                                                                Could not fetch comments:<br>
+                                                                {error.message}
+                                                            </p>
 
                                                             <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias, consectetur corporis dignissimos dolore ex explicabo fuga laborum maiores modi natus nesciunt, placeat quidem quis repellat, repellendus ullam vero! Quae, similique?</p>
 
-                                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                                                            Atque autem beatae blanditiis deleniti deserunt dicta
-                                                            dignissimos eius eos illum incidunt minus odit repudiandae
-                                                            rerum, sequi suscipit temporibus vero voluptatibus
-                                                            voluptatum.</p>
-                                                        <p>Accusamus, aspernatur assumenda blanditiis, enim fugiat iure
-                                                            necessitatibus neque quae quia repudiandae saepe sunt
-                                                            voluptates. Beatae consequuntur distinctio hic obcaecati
-                                                            quibusdam? Aspernatur culpa delectus, eos esse illum omnis
-                                                            reiciendis temporibus!</p>
-                                                        <p>A atque dicta eius inventore iste laboriosam obcaecati
-                                                            quaerat quis voluptas? Error impedit inventore laudantium
-                                                            maiores nisi odio pariatur similique soluta. Beatae dicta
-                                                            eveniet ex excepturi rem sed unde voluptate.</p>
-                                                    {/await}
+                                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                                                                Atque autem beatae blanditiis deleniti deserunt dicta
+                                                                dignissimos eius eos illum incidunt minus odit repudiandae
+                                                                rerum, sequi suscipit temporibus vero voluptatibus
+                                                                voluptatum.</p>
+                                                            <p>Accusamus, aspernatur assumenda blanditiis, enim fugiat iure
+                                                                necessitatibus neque quae quia repudiandae saepe sunt
+                                                                voluptates. Beatae consequuntur distinctio hic obcaecati
+                                                                quibusdam? Aspernatur culpa delectus, eos esse illum omnis
+                                                                reiciendis temporibus!</p>
+                                                            <p>A atque dicta eius inventore iste laboriosam obcaecati
+                                                                quaerat quis voluptas? Error impedit inventore laudantium
+                                                                maiores nisi odio pariatur similique soluta. Beatae dicta
+                                                                eveniet ex excepturi rem sed unde voluptate.</p>
+                                                        {/await}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -205,10 +207,11 @@
     .comment-panel .card {
         width: 100%;
         height: 100%;
+        padding: calc(var(--bs-gutter-x) * 0.5);
         overflow-y: scroll;
     }
 
-    .comment-panel div.row {
+    .comment-panel .row {
         max-height: 100%;
 
         @media (min-width: 992px) {
@@ -220,20 +223,18 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: calc(var(--bs-gutter-x) * 0.5);
-        background-color: var(--bs-tertiary-bg);
 
         @media (min-width: 992px) {
             height: 100%;
         }
     }
 
-    .carousel-item div img, .carousel-item div video {
+    .carousel-item img, .carousel-item video {
         max-height: 100%;
         max-width: 100%;
     }
 
-    .carousel-item div object {
+    .carousel-item object {
         height: 100%;
         width: 100%;
     }
@@ -249,18 +250,18 @@
         background-color: rgba(255, 255, 255, 0.1);
     }
 
+    .carousel-control-close {
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 10;
+    }
+
     .carousel-control-close button {
         transition: opacity .15s ease, background-color .15s ease;
     }
 
     .carousel-control-close button:focus, .carousel-control-close button:hover {
         background-color: rgba(0, 0, 0, 0.1);
-    }
-
-    .carousel-control-close {
-        position: absolute;
-        top: 0;
-        right: 0;
-        z-index: 10;
     }
 </style>
