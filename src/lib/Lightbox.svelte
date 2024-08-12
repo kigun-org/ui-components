@@ -111,7 +111,14 @@
                                                     <div class="col-xs-12 col-lg-4">
                                                         <div class="p-3 bg-body-tertiary h-100">
                                                             {#await fetchComments(item)}
-                                                                <p class="p-2">Fetching comments ...</p>
+                                                                <div class="p-2 d-flex flex-column align-items-center gap-3">
+                                                                    <div class="spinner-border" role="status">
+                                                                        <span class="visually-hidden">Loading...</span>
+                                                                    </div>
+                                                                    <h4>
+                                                                        Fetching comments
+                                                                    </h4>
+                                                                </div>
                                                             {:then response}
                                                                 <div use:processResponse={response}></div>
                                                             {:catch error}
