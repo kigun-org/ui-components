@@ -99,37 +99,37 @@
 
     <Lightbox gallery="example-gallery-comment" />
 
-    <hr>
+<!--    <hr>-->
 
-    <form method="post" action="/test" class="container">
-        <div class="row mb-5">
-            <h1>Select component</h1>
-            <div class="col-3">
-                <label for="single">Single</label>
-                <Select id="single" name="abc" options={states} selectedItems={[4]} on:change={valueChanged}/>
-            </div>
-            <div class="col-5">
-                <label for="multiple">Multiple</label>
-                <Select id="multiple" name="def" options={states} selectedItems={[4,3]} multiple={true}
-                        on:change={valueChanged}/>
-            </div>
-            <div class="col-4">
-                <label for="multiple">Multiple error</label>
-                <Select id="multiple" name="ghi" errors={true}
-                        options={states} selectedItems={[4,3]} multiple={true} on:change={valueChanged}/>
-            </div>
-        </div>
+<!--    <form method="post" action="/test" class="container">-->
+<!--        <div class="row mb-5">-->
+<!--            <h1>Select component</h1>-->
+<!--            <div class="col-3">-->
+<!--                <label for="single">Single</label>-->
+<!--                <Select id="single" name="abc" options={states} selectedItems={[4]} on:change={valueChanged}/>-->
+<!--            </div>-->
+<!--            <div class="col-5">-->
+<!--                <label for="multiple">Multiple</label>-->
+<!--                <Select id="multiple" name="def" options={states} selectedItems={[4,3]} multiple={true}-->
+<!--                        on:change={valueChanged}/>-->
+<!--            </div>-->
+<!--            <div class="col-4">-->
+<!--                <label for="multiple">Multiple error</label>-->
+<!--                <Select id="multiple" name="ghi" errors={true}-->
+<!--                        options={states} selectedItems={[4,3]} multiple={true} on:change={valueChanged}/>-->
+<!--            </div>-->
+<!--        </div>-->
 
-        <hr>
+<!--        <hr>-->
 
-        <div class="row mb-5">
-            <h1>UploadFolder component</h1>
-            <div class="col-auto">
-                <UploadFolder id="upload1" on:change={filesSelected}/>
-            </div>
-            <div class="col-7">
-                <UploadFolder id="upload2" message="Another message, should still work fine" on:change={filesSelected}/>
-            </div>
-        </div>
-    </form>
+<!--        <div class="row mb-5">-->
+<!--            <h1>UploadFolder component</h1>-->
+<!--            <div class="col-auto">-->
+<!--                <UploadFolder id="upload1" on:change={filesSelected}/>-->
+<!--            </div>-->
+<!--            <div class="col-7">-->
+<!--                <UploadFolder id="upload2" message="Another message, should still work fine" on:change={filesSelected}/>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </form>-->
 </main>

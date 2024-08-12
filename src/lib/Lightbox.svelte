@@ -2,6 +2,7 @@
 <script lang="ts">
     import {Modal, Carousel} from "bootstrap";
     import {onMount} from "svelte";
+    import ItemComponent from "./ItemComponent.svelte";
 
     export let items: any[] = []
 
@@ -91,82 +92,60 @@
     }
 </script>
 
-<div bind:this={modalElement} class="modal fade" tabindex="-1">
-    <div class="modal-dialog modal-fullscreen p-lg-3">
+<div class="modal fade" bind:this={modalElement} tabindex="-1">
+    <div class="modal-dialog modal-fullscreen">
         <div class="modal-content">
-            <div bind:this={carouselElement} class="carousel slide">
-                <div class="carousel-inner">
-                    {#if modalVisible}
-                        {#each items as item, index}
-                            <div class="carousel-item" class:active={selectedItem === index}>
-                                {#if item.commentsURL}
-                                    <div class="comment-panel">
-                                        <div class="card">
-                                            <div class="row">
-                                                <div class="col comment-image-panel">
-                                                    {#if item.type === "image"}
-                                                        <img src={item.url} alt="">
-                                                    {:else if item.type === "video"}
-                                                        <video controls controlslist="nodownload"
-                                                               poster={item.thumbnail} src={item.url}>
-                                                            Your browser doesn't seem to support HTML video.
-                                                        </video>
-                                                    {:else if item.type === "pdf"}
-                                                        <object data={item.url} type="application/pdf" title="Document">
-                                                            Your browser doesn't support viewing PDFs.
-                                                        </object>
-                                                    {/if}
-                                                </div>
-                                                <div class="col-xs-12 col-lg-4">
-                                                    <div class="p-3 bg-body-tertiary h-100">
-                                                        {#await fetchComments(item)}
-                                                            <p class="p-2">Fetching comments ...</p>
-                                                        {:then response}
-                                                            <div use:processResponse={response}></div>
-                                                        {:catch error}
-                                                            <p class="p-2 bg-danger-subtle text-danger-emphasis">
-                                                                Could not fetch comments:<br>
-                                                                {error.message}
-                                                            </p>
-                                                        {/await}
+            <div class="carousel-container">
+                <div class="carousel slide" bind:this={carouselElement}>
+                    <div class="carousel-inner">
+                        {#if modalVisible}
+                            {#each items as item, index}
+                                <div class="carousel-item" class:active={selectedItem === index}>
+                                    <div class="item-container">
+                                        {#if item.commentsURL}
+                                            <div class="card">
+                                                <div class="row g-0">
+                                                    <div class="col-xs-12 col-lg-8">
+                                                        <ItemComponent item={item} />
+                                                    </div>
+                                                    <div class="col-xs-12 col-lg-4">
+                                                        <div class="p-3 bg-body-tertiary h-100">
+                                                            {#await fetchComments(item)}
+                                                                <p class="p-2">Fetching comments ...</p>
+                                                            {:then response}
+                                                                <div use:processResponse={response}></div>
+                                                            {:catch error}
+                                                                <p class="p-2 bg-danger-subtle text-danger-emphasis">
+                                                                    Could not fetch comments:<br>
+                                                                    {error.message}
+                                                                </p>
+                                                            {/await}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                {:else}
-                                    <div>
-                                        {#if item.type === "image"}
-                                            <img src={item.url} alt="">
-                                        {:else if item.type === "video"}
-                                            <video controls controlslist="nodownload"
-                                                   poster={item.thumbnail} src={item.url}>
-                                                Your browser doesn't seem to support HTML video.
-                                            </video>
-                                        {:else if item.type === "pdf"}
-                                            <object data={item.url} type="application/pdf" title="Document">
-                                                Your browser doesn't support viewing PDFs.
-                                            </object>
+                                        {:else}
+                                            <ItemComponent item={item} />
                                         {/if}
                                     </div>
-                                {/if}
-                            </div>
-                        {/each}
+                                </div>
+                            {/each}
+                        {/if}
+                    </div>
+                    {#if items.length > 1}
+                        <button class="carousel-control-prev" on:click={() => carousel.prev()} type="button">
+                            <span aria-hidden="true" class="carousel-control-prev-icon"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button bind:this={nextElement} class="carousel-control-next" on:click={() => carousel.next()}
+                                type="button">
+                            <span aria-hidden="true" class="carousel-control-next-icon"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
                     {/if}
-                </div>
-                {#if items.length > 1}
-                    <button class="carousel-control-prev" on:click={() => carousel.prev()} type="button">
-                        <span aria-hidden="true" class="carousel-control-prev-icon"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button bind:this={nextElement} class="carousel-control-next" on:click={() => carousel.next()}
-                            type="button">
-                        <span aria-hidden="true" class="carousel-control-next-icon"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                {/if}
-                <div class="carousel-control-close" data-bs-theme="dark">
-                    <button aria-label="Close" class="btn-close p-4" data-bs-dismiss="modal" type="button"></button>
+                    <div class="carousel-control-close" data-bs-theme="dark">
+                        <button aria-label="Close" class="btn-close p-4" data-bs-dismiss="modal" type="button"></button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -174,74 +153,57 @@
 </div>
 
 <style>
-    /*.modal-backdrop.show {*/
-    /*    opacity: 0.85 !important;*/
-    /*}*/
-
-    .carousel {
-        height: 100%;
-    }
-
     .modal-content {
         background-color: transparent;
     }
 
-    .carousel-inner {
-        display: flex;
-        justify-items: center;
+    /*.modal-backdrop.show {*/
+    /*    opacity: 0.85 !important;*/
+    /*}*/
+
+    .carousel-container,
+    .carousel,
+    .carousel-inner,
+    .carousel-item,
+    .item-container {
         height: 100%;
     }
 
-    .carousel-item > div {
+    .item-container {
         display: flex;
-        flex-direction: column;
         align-items: center;
         justify-content: center;
-
-        height: calc(100vh - 2rem);
     }
 
-    .comment-panel {
-        padding: 0 max(5%, 75px);
+    .item-container > .card {
+        padding: 1rem;
+
+        width: calc(100% - 2 * max(5%, 50px));
+        height: 95%;
     }
 
-    .comment-panel .card {
-        width: 100%;
-        height: 100%;
-        padding: calc(var(--bs-gutter-x) * 0.5);
+    .card .row {
         overflow-y: scroll;
-    }
-
-    .comment-panel .row {
-        max-height: 100%;
 
         @media (min-width: 992px) {
             height: 100%;
         }
     }
 
-    .comment-image-panel {
+    .card .col-lg-8 {
         display: flex;
         align-items: center;
         justify-content: center;
 
+        max-height: 80vh;
+
         @media (min-width: 992px) {
-            height: 100%;
+            max-height: 100%;
         }
-    }
-
-    .carousel-item img, .carousel-item video {
-        max-height: 100%;
-        max-width: 100%;
-    }
-
-    .carousel-item object {
-        height: 100%;
-        width: 100%;
     }
 
     .carousel-control-next, .carousel-control-prev {
-        width: max(5%, 75px);
+        width: max(5%, 50px);
         top: 30vh;
         bottom: 30vh;
         transition: opacity .15s ease, background-color .15s ease;
