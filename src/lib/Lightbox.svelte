@@ -202,7 +202,7 @@
     }
 
     .comment-panel {
-        padding: 0 15%;
+        padding: 0 max(10%, 100px);
     }
 
     .comment-panel .card {
@@ -241,6 +241,7 @@
     }
 
     .carousel-control-next, .carousel-control-prev {
+        width: max(10%, 100px);
         top: 30vh;
         bottom: 30vh;
         transition: opacity .15s ease, background-color .15s ease;
