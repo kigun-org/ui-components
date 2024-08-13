@@ -8,6 +8,8 @@
 
     export let gallery: string
 
+    export let pdfjs: string | undefined = undefined;
+
     let selectedItem: number
 
     let modal
@@ -106,7 +108,7 @@
                                             <div class="card">
                                                 <div class="row g-0">
                                                     <div class="col-xs-12 col-lg-8">
-                                                        <ItemComponent item={item} />
+                                                        <ItemComponent item={item} pdfjs={pdfjs} />
                                                     </div>
                                                     <div class="col-xs-12 col-lg-4">
                                                         <div class="p-3 bg-body-tertiary h-100">
@@ -132,7 +134,7 @@
                                                 </div>
                                             </div>
                                         {:else}
-                                            <ItemComponent item={item} />
+                                            <ItemComponent item={item} pdfjs={pdfjs} />
                                         {/if}
                                     </div>
                                 </div>
