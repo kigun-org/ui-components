@@ -13,22 +13,23 @@
     "test:watch": "vitest"
   },
   "devDependencies": {
-    "@playwright/test": "^1.46.0",
-    "@sveltejs/vite-plugin-svelte": "^3.1.1",
-    "@testing-library/jest-dom": "^6.4.8",
+    "@playwright/test": "^1.47.2",
+    "@rollup/plugin-inject": "^5.0.5",
+    "@sveltejs/vite-plugin-svelte": "^3.1.2",
+    "@testing-library/jest-dom": "^6.5.0",
     "@testing-library/svelte": "^5.2.1",
     "@types/bootstrap": "^5.2.10",
-    "@types/node": "^22.2.0",
-    "@vitest/coverage-v8": "^2.0.5",
-    "@vitest/ui": "^2.0.5",
-    "jsdom": "^24.1.1",
-    "svelte": "^4.2.18",
-    "vite": "^5.4.0",
-    "vitest": "^2.0.5"
+    "@types/node": "^22.5.5",
+    "@vitest/coverage-v8": "^2.1.1",
+    "@vitest/ui": "^2.1.1",
+    "jsdom": "^25.0.1",
+    "svelte": "^4.2.19",
+    "vite": "^5.4.7",
+    "vitest": "^2.1.1"
   },
   "dependencies": {
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
-    "fabric": "^6.1.0"
+    "fabric": "^6.4.2"
   }
 }

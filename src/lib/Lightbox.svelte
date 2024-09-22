@@ -1,6 +1,5 @@
 <svelte:options customElement={{tag: "lightbox-gallery", shadow: 'none'}}/>
 <script lang="ts">
-    import {Modal, Carousel} from "bootstrap";
     import {onMount} from "svelte";
     import ItemComponent from "./ItemComponent.svelte";
 
@@ -54,7 +53,7 @@
             items.push(item)
         })
 
-        modal = new Modal(modalElement, {})
+        modal = new bootstrap.Modal(modalElement, {})
         modalElement.addEventListener('shown.bs.modal', () => {
             if (nextElement !== undefined) {
                 nextElement.focus()
@@ -64,7 +63,7 @@
             modalVisible = false
         })
 
-        carousel = new Carousel(carouselElement, {})
+        carousel = new bootstrap.Carousel(carouselElement, {})
         carouselElement.addEventListener('slide.bs.carousel', () => {
             // pause all videos when sliding through carousel
             document.querySelectorAll('video').forEach((video) => {
